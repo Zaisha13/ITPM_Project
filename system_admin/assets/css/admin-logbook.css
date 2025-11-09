@@ -1,0 +1,383 @@
+﻿/* ============================================
+   LOGBOOK STYLES (Orders Logbook)
+   ============================================ */
+.logbook-header {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-light) 100%);
+    color: var(--white);
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow-blue);
+    flex-shrink: 0;
+}
+
+.btn-back {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--white);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+}
+
+.btn-back:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateX(-2px);
+}
+
+.btn-back svg {
+    flex-shrink: 0;
+}
+
+.logbook-title {
+    flex: 1;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin: 0;
+}
+
+.logbook-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logbook-search {
+    height: 44px;
+    padding: 0 16px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    min-width: 300px;
+    background: rgba(255, 255, 255, 0.95);
+    color: var(--text-dark);
+    transition: all 0.2s ease;
+}
+
+.logbook-search:focus {
+    outline: none;
+    background: var(--white);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+}
+
+.logbook-search::placeholder {
+    color: var(--text-secondary);
+}
+
+.btn-add-customer {
+    background: var(--success);
+    color: var(--white);
+    border: none;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-sm);
+    white-space: nowrap;
+}
+
+.btn-add-customer:hover {
+    background: #059669;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.logbook-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-shrink: 0;
+}
+
+.stat-card {
+    background: var(--white);
+    border: 1px solid var(--light-gray);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-light) 0%, var(--accent-teal) 100%);
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--accent-blue);
+}
+
+.stat-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    margin-bottom: 8px;
+}
+
+.stat-icon-blue {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-light) 100%);
+}
+
+.stat-icon-green {
+    background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+}
+
+.stat-icon-orange {
+    background: linear-gradient(135deg, var(--warning) 0%, #D97706 100%);
+}
+
+.stat-icon-yellow {
+    background: linear-gradient(135deg, #FCD34D 0%, #F59E0B 100%);
+}
+
+.stat-label {
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-value {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--primary-blue);
+    letter-spacing: -1px;
+}
+
+.logbook-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    background: var(--white);
+    border: 1px solid var(--light-gray);
+    border-radius: 12px;
+    padding: 8px;
+    box-shadow: var(--shadow-sm);
+    flex-shrink: 0;
+}
+
+.logbook-tab {
+    flex: 1;
+    padding: 12px 24px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.logbook-tab:hover {
+    background: rgba(11, 74, 107, 0.05);
+    color: var(--primary-blue);
+}
+
+.logbook-tab.active {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-light) 100%);
+    color: var(--white);
+    box-shadow: var(--shadow-sm);
+}
+
+.logbook-table-section {
+    margin-top: 16px;
+}
+
+.logbook-table-card-header {
+    align-items: center;
+}
+
+.logbook-table-card-header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.logbook-table-card-header-left .orders-table-card-title {
+    margin: 0;
+}
+
+.logbook-table-card-header-left .orders-table-card-subtitle {
+    margin: 0;
+    color: var(--text-secondary);
+}
+
+.logbook-count-pill {
+    background: rgba(148, 163, 184, 0.2);
+    color: var(--text-dark);
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.orders-table.logbook-table {
+    min-width: 1040px;
+    width: 100%;
+}
+
+.logbook-col-id {
+    width: 110px;
+}
+
+.logbook-col-first-name,
+.logbook-col-last-name {
+    width: 160px;
+}
+
+.logbook-col-account {
+    width: 120px;
+}
+
+.logbook-col-phone {
+    width: 160px;
+}
+
+.logbook-col-address {
+    width: 320px;
+}
+
+.logbook-col-created {
+    width: 160px;
+}
+
+.orders-table.logbook-table thead th,
+.orders-table.logbook-table tbody td {
+    text-align: left;
+}
+
+.orders-table.logbook-table thead th {
+    white-space: nowrap;
+}
+
+.orders-table tbody .logbook-table-row {
+    background: var(--white);
+    border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+.orders-table tbody .logbook-table-row:hover {
+    background: #F8FAFC;
+    box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.12);
+}
+
+.orders-table tbody .logbook-table-row:focus,
+.orders-table tbody .logbook-table-row:focus-within {
+    background: rgba(59, 130, 246, 0.05);
+    box-shadow: inset 0 0 0 2px rgba(59, 130, 246, 0.2);
+    outline: none;
+}
+
+.orders-table tbody .logbook-table-row > td {
+    padding: 14px 16px;
+    font-size: 14px;
+    color: var(--text-dark);
+    vertical-align: middle;
+    word-break: break-word;
+    white-space: nowrap;
+}
+
+.orders-table tbody .logbook-table-row > td:first-child {
+    font-weight: 600;
+    color: var(--primary-dark);
+    white-space: nowrap;
+}
+
+.orders-table tbody .logbook-table-row .logbook-phone-cell {
+    white-space: nowrap;
+}
+
+.orders-table tbody .logbook-table-row .logbook-address-cell {
+    min-width: 220px;
+    white-space: normal;
+}
+
+.logbook-empty-state-cell {
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 15px;
+    font-weight: 500;
+}
+
+/* Orders page responsive styles */
+@media (max-width: 1024px) {
+    .orders-page-header {
+        padding: 20px 24px;
+    }
+    
+    .orders-filter-card .filter-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filter-actions {
+        margin-left: 0;
+        width: 100%;
+        justify-content: stretch;
+    }
+    
+    .filter-actions button {
+        flex: 1;
+    }
+    
+    .orders-table-header,
+    .orders-table-body .orders-table-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+    
+    .orders-table-header div,
+    .orders-table-body .orders-table-row div {
+        padding: 12px;
+        border-bottom: 1px solid var(--light-gray);
+    }
+    
+    .orders-table-header div:first-child,
+    .orders-table-body .orders-table-row div:first-child {
+        font-weight: 700;
+        background: var(--light-gray);
+    }
+}
+

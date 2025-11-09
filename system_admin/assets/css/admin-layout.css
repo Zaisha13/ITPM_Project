@@ -1,0 +1,99 @@
+﻿/* ============================================
+   MAIN CONTENT AREA
+   ============================================ */
+.content { 
+    padding: 16px 20px; 
+    margin-left: 280px; 
+    min-height: 100vh; 
+    max-height: 100vh;
+    overflow-y: auto; 
+    overflow-x: hidden;
+    background: var(--light-bg);
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Adjust content margin when sidebar is collapsed */
+.sidebar.collapsed ~ .content {
+    margin-left: 80px;
+    transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Keep content margin when hovering over collapsed sidebar */
+.sidebar.collapsed:hover ~ .content {
+    margin-left: 280px;
+}
+
+.content::-webkit-scrollbar {
+    width: 10px;
+}
+
+.content::-webkit-scrollbar-track {
+    background: var(--light-gray);
+    border-radius: 5px;
+}
+
+.content::-webkit-scrollbar-thumb {
+    background: var(--medium-gray);
+    border-radius: 5px;
+}
+
+.content::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-light);
+}
+
+/* ============================================
+   TOPBAR - Modern Header
+   ============================================ */
+.topbar {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-light) 100%);
+    color: var(--white);
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow-blue);
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.topbar::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.page-title { 
+    font-size: 24px; 
+    font-weight: 700; 
+    letter-spacing: -0.5px;
+    position: relative;
+    z-index: 1;
+}
+
+.welcome { 
+    opacity: 0.95; 
+    font-weight: 500; 
+    font-size: 13px;
+    position: relative;
+    z-index: 1;
+}
+
+/* ============================================
+   SECTION TITLES
+   ============================================ */
+.section-title {
+    color: var(--text-dark);
+    font-size: 18px;
+    font-weight: 700;
+    margin: 16px 0 12px;
+    letter-spacing: -0.3px;
+}
+

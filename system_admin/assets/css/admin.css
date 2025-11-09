@@ -1,0 +1,17 @@
+/* Aggregated admin styles split into modular files for easier maintenance */
+@import url("./admin-base.css");
+@import url("./admin-sidebar.css");
+@import url("./admin-layout.css");
+@import url("./admin-table.css");
+@import url("./admin-dashboard.css");
+@import url("./admin-manual-entry.css");
+@import url("./admin-orders.css");
+@import url("./admin-admin-management.css");
+@import url("./admin-responsive.css");
+@import url("./admin-logbook.css");
+@import url("./admin-stock.css");
+@import url("./admin-manual-entry-search.css");
+@import url("./admin-system-config.css");
+@import url("./admin-feedback.css");
+@import url("./admin-orders-extended.css");
+ 

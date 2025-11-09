@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Avenue - Customer Portal Guide</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/homepage.css">
+    <link rel="stylesheet" href="assets/css/login.css">
+    <link rel="stylesheet" href="assets/css/register.css">
+    <link rel="stylesheet" href="assets/css/order.css">
+    <link rel="stylesheet" href="assets/css/profile.css">
+    <link rel="stylesheet" href="assets/css/guide.css">
+</head>
+<body data-page="guide" data-homepage="index.html" data-header-offset="80">
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <svg class="water-droplet" viewBox="0 0 24 24" width="40" height="40">
+                        <defs>
+                            <linearGradient id="logoDropletGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#4DD0E1;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#00BCD4;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" fill="url(#logoDropletGradient)"/>
+                    </svg>
+                    <span class="logo-text">WATER AVENUE</span>
+                </div>
+                
+                <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                
+                <nav class="nav" id="mainNav">
+                    <a href="index.html#home" class="nav-link" data-section="home">Home</a>
+                    <a href="index.html#about" class="nav-link" data-section="about">About</a>
+                    <a href="guide.html" class="nav-link" data-page="guide">Guide</a>
+                </nav>
+                
+                <div class="auth-section is-loading" id="authSection">
+                    <div class="auth-group is-active" id="authLoggedOut">
+                        <button class="btn-user" id="userBtn">Login</button>
+                    </div>
+                    <div class="auth-group" id="authLoggedIn">
+                        <span class="welcome-text" id="welcomeText"></span>
+                        <button class="btn-profile" id="profileBtn">Profile</button>
+                        <button class="btn-logout" id="logoutBtn">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="guide-main">
+        <section class="guide-hero">
+            <div class="container">
+                <div class="guide-hero-content">
+                    <div class="guide-hero-text">
+                        <p class="guide-eyebrow">Customer Portal Guide</p>
+                        <h1>Navigate Water Avenue with Confidence</h1>
+                        <p class="guide-description">
+                            Learn how to move from login to order completion in just a few clicks. This guide shows you what each section does, how to place orders, and where to get help whenever you need it.
+                        </p>
+                        <div class="guide-hero-actions">
+                            <a class="btn-primary" href="index.html#home">
+                                <span>Back to Portal</span>
+                            </a>
+                            <a class="btn-secondary" href="index.html#home">
+                                <span>Create an Account</span>
+                            </a>
+                        </div>
+                        <div class="guide-hero-meta">
+                            <span>Jump to:</span>
+                            <div class="guide-hero-links">
+                                <a href="#guide-navigation" class="guide-hero-link">Portal Overview</a>
+                                <a href="#guide-orders" class="guide-hero-link">Ordering Flow</a>
+                                <a href="#guide-support" class="guide-hero-link">Support & Tips</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="guide-hero-visual">
+                        <div class="guide-hero-card">
+                            <h3>Top Tasks</h3>
+                            <ul>
+                                <li><span>Create an account or sign in securely</span></li>
+                                <li><span>Submit and track container orders in real-time</span></li>
+                                <li><span>Update your delivery address and customer details</span></li>
+                                <li><span>Send feedback directly to the Water Avenue team</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="guide-section" id="guide-navigation">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Explore Every Corner</h2>
+                    <p class="section-subtitle">Each tab in the customer portal is built to make ordering purified water faster and easier.</p>
+                </div>
+                <div class="guide-grid">
+                    <article class="guide-card">
+                        <span class="guide-card-label">Home Dashboard</span>
+                        <h3>Stay informed instantly</h3>
+                        <ul class="guide-card-list">
+                            <li>See featured announcements and service highlights.</li>
+                            <li>Check if ordering capacity is still available today.</li>
+                            <li>Open the order form or profile modal in one click.</li>
+                        </ul>
+                    </article>
+                    <article class="guide-card">
+                        <span class="guide-card-label">Order Center</span>
+                        <h3>Organize orders effortlessly</h3>
+                        <ul class="guide-card-list">
+                            <li>Select container type, order type, and quantities.</li>
+                            <li>Store multiple items before submitting in one go.</li>
+                            <li>Review a live summary and running totals.</li>
+                        </ul>
+                    </article>
+                    <article class="guide-card">
+                        <span class="guide-card-label">Profile & Settings</span>
+                        <h3>Manage your account</h3>
+                        <ul class="guide-card-list">
+                            <li>Update contact information and delivery address.</li>
+                            <li>Switch between regular and dealer account types.</li>
+                            <li>Reset your password with real-time strength checks.</li>
+                        </ul>
+                    </article>
+                    <article class="guide-card">
+                        <span class="guide-card-label">Order History</span>
+                        <h3>Track your deliveries</h3>
+                        <ul class="guide-card-list">
+                            <li>Monitor current order status from approval to delivery.</li>
+                            <li>Open detailed views to see items, totals, and timestamps.</li>
+                            <li>Submit feedback or reorder completed requests.</li>
+                        </ul>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="guide-section guide-section-alt" id="guide-orders">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Ordering in Four Simple Steps</h2>
+                    <p class="section-subtitle">From login to delivery tracking, follow this workflow to complete every request smoothly.</p>
+                </div>
+                <div class="guide-stepper">
+                    <div class="guide-step">
+                        <div class="guide-step-index">1</div>
+                        <div class="guide-step-content">
+                            <h3>Sign in or register</h3>
+                            <p>Use the <strong>Login</strong> or <strong>Profile</strong> buttons on the top-right. New customers can quickly register with personal details and preferred customer type.</p>
+                        </div>
+                    </div>
+                    <div class="guide-step">
+                        <div class="guide-step-index">2</div>
+                        <div class="guide-step-content">
+                            <h3>Build your order</h3>
+                            <p>Choose container shape, select refill or brand new, adjust quantities, and add optional Wilkins bottles. Your subtotal updates instantly.</p>
+                        </div>
+                    </div>
+                    <div class="guide-step">
+                        <div class="guide-step-index">3</div>
+                        <div class="guide-step-content">
+                            <h3>Confirm delivery details</h3>
+                            <p>Set your delivery address, pickup preference, and payment method. Use the default address toggle to autofill saved information.</p>
+                        </div>
+                    </div>
+                    <div class="guide-step">
+                        <div class="guide-step-index">4</div>
+                        <div class="guide-step-content">
+                            <h3>Track progress</h3>
+                            <p>After placing an order, open <strong>Profile → Order History</strong> to watch statuses update, review details, or submit feedback post-delivery.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="guide-support" id="guide-support">
+            <div class="container">
+                <div class="guide-support-grid">
+                    <div class="guide-support-card">
+                        <h3>Quick tips for a smooth experience</h3>
+                        <ul>
+                            <li>Keep your browser logged in to avoid re-entering credentials.</li>
+                            <li>Check the capacity indicator before submitting large orders.</li>
+                            <li>Save multiple addresses by updating your profile after each delivery.</li>
+                            <li>Use the feedback form to share concerns or praise the delivery team.</li>
+                        </ul>
+                    </div>
+                    <div class="guide-support-card guide-support-card-highlight">
+                        <h3>Need assistance?</h3>
+                        <p>We are ready to help during business hours. You can review schedules or check active maintenance notices anytime.</p>
+                        <div class="guide-support-actions">
+                            <a class="btn-secondary" href="index.html#home">
+                                <span>View Operating Hours</span>
+                            </a>
+                            <a class="btn-secondary" href="index.html#home">
+                                <span>Maintenance Updates</span>
+                            </a>
+                        </div>
+                        <div class="guide-support-contact">
+                            <p><strong>Hotline:</strong> +63 123 456 7890</p>
+                            <p><strong>Email:</strong> support@wateravenue.ph</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="guide-faq">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Frequently Asked Questions</h2>
+                    <p class="section-subtitle">Quick answers to popular portal questions.</p>
+                </div>
+                <div class="guide-faq-list">
+                    <details class="guide-faq-item" open>
+                        <summary>How do I reset my password?</summary>
+                        <p>Open <strong>Profile → Manage Profile</strong>, scroll to the password section, and enter your current password along with a new secure one. Confirm to save changes.</p>
+                    </details>
+                    <details class="guide-faq-item">
+                        <summary>Where can I see my pending orders?</summary>
+                        <p>Head to <strong>Profile → Order History</strong>. Pending and approved orders list first, showing totals, statuses, and a shortcut to view more details.</p>
+                    </details>
+                    <details class="guide-faq-item">
+                        <summary>Can I reorder a completed request?</summary>
+                        <p>Yes. In the order history table, open the completed order and select <strong>Re-order</strong>. The portal rebuilds your cart based on the previous items.</p>
+                    </details>
+                    <details class="guide-faq-item">
+                        <summary>How do I submit feedback?</summary>
+                        <p>After opening an order from the history view, click <strong>Leave Feedback</strong>. Rate your experience, add optional comments, and submit to notify the team.</p>
+                    </details>
+                </div>
+            </div>
+        </section>
+
+        <section class="guide-cta">
+            <div class="container">
+                <div class="guide-cta-card">
+                    <h2>Ready to explore the portal?</h2>
+                    <p>Return to the main dashboard to place an order or browse announcements. Your account tools stay one click away.</p>
+                    <a class="btn-primary" href="index.html#home">
+                        <span>Return to Dashboard</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Water Avenue</h3>
+                    <p>This purified water passed through a series of filtration process with reverse osmosis system with UV sterilization and ozonation equipment making water clean and safe to drink.</p>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <nav class="footer-nav">
+                        <a href="index.html#home" data-section="home">Home</a>
+                        <a href="index.html#about" data-section="about">About</a>
+                        <a href="guide.html" data-page="guide">Guide</a>
+                        <a href="index.html#feedback" data-section="feedback">Inquiry</a>
+                    </nav>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <p>+63 123 456 7890</p>
+                    <p>+63 123 456 7890</p>
+                    <div class="social-icon">
+                        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                © 2025 Water Avenue. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal Container (Now inside the body) -->
+    <div id="modalContainer">
+        <div class="modal-overlay">
+            <div class="modal-content login-modal">
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+                
+                <div class="modal-header">
+                    <svg class="modal-icon" viewBox="0 0 24 24" width="48" height="48">
+                        <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" fill="currentColor"/>
+                    </svg>
+                    <h2>Welcome Back!</h2>
+                </div>
+                
+                <form id="loginForm" class="form">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" required>
+                        <span class="error-message" id="usernameError"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="password-wrapper">
+                            <input type="password" id="password" required>
+                            <button type="button" class="toggle-password" id="togglePassword">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                        </div>
+                        <span class="error-message" id="passwordError"></span>
+                    </div>
+                    
+                    <button type="submit" class="btn-submit">Login</button>
+                    
+                    <p class="switch-text">
+                        Don't have an account? 
+                        <a href="#" id="switchToRegister">Sign Up</a>
+                    </p>
+                </form>
+            </div>
+        </div>
+
+        <div class="modal-overlay">
+            <div class="modal-content register-modal">
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+                
+                <div class="register-layout">
+                    <div class="register-sidebar">
+                        <svg class="sidebar-icon" viewBox="0 0 24 24" width="80" height="80">
+                            <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" fill="currentColor"/>
+                        </svg>
+                        <h1 class="sidebar-title">WATER AVENUE</h1>
+                        <div class="sidebar-tagline">
+                            <p>HYDRATE</p>
+                            <p>REFRESH</p>
+                            <p>REPEAT</p>
+                        </div>
+                    </div>
+                    
+                    <div class="register-form-container">
+                        <h2 class="form-title">Sign Up</h2>
+                        
+                        <form id="registerForm" class="form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="firstName">First Name</label>
+                                    <input type="text" id="firstName" required>
+                                    <span class="error-message" id="firstNameError"></span>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="lastName">Last Name</label>
+                                    <input type="text" id="lastName" required>
+                                    <span class="error-message" id="lastNameError"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="regUsername">Username</label>
+                                    <input type="text" id="regUsername" required>
+                                    <span class="error-message" id="regUsernameError"></span>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="phoneNumber">Phone Number</label>
+                                    <input type="tel" id="phoneNumber" required>
+                                    <span class="error-message" id="phoneNumberError"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input type="email" id="email" required>
+                                    <span class="error-message" id="emailError"></span>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="address">Address</label>
+                                    <textarea id="address" rows="3" required></textarea>
+                                    <span class="error-message" id="addressError"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Customer Type</label>
+                                <div class="radio-group">
+                                    <label class="radio-label">
+                                        <input type="radio" name="customerType" value="regular" checked>
+                                        <span>Regular</span>
+                                    </label>
+                                    <label class="radio-label">
+                                        <input type="radio" name="customerType" value="dealer">
+                                        <span>Dealer</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="regPassword">Password</label>
+                                    <div class="password-wrapper">
+                                        <input type="password" id="regPassword" required>
+                                        <button type="button" class="toggle-password" id="toggleRegPassword">
+                                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                <circle cx="12" cy="12" r="3"></circle>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class="password-strength" id="passwordStrength">
+                                        <div class="strength-bar">
+                                            <div class="strength-fill" id="strengthFill"></div>
+                                        </div>
+                                        <span class="strength-text" id="strengthText">Enter a password</span>
+                                    </div>
+                                    <span class="error-message" id="regPasswordError"></span>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="confirmPassword">Retype Password</label>
+                                    <div class="password-wrapper">
+                                        <input type="password" id="confirmPassword" required>
+                                        <button type="button" class="toggle-password" id="toggleConfirmPassword">
+                                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                <circle cx="12" cy="12" r="3"></circle>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <span class="error-message" id="confirmPasswordError"></span>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn-submit">Sign Up</button>
+                            
+                            <p class="switch-text">
+                                Already have an account? 
+                                <a href="#" id="switchToLogin">Login</a>
+                            </p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-overlay">
+            <div class="modal-content order-modal">
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+                
+                <div class="order-layout">
+                    <!-- Order Form -->
+                    <div class="order-form-section">
+                        <div class="form-card">
+                            <h3 class="form-card-title">Order Form</h3>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Container Type</label>
+                                <div class="toggle-group">
+                                    <button type="button" class="toggle-btn" data-type="round">Round</button>
+                                    <button type="button" class="toggle-btn active" data-type="slim">Slim</button>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Order Type</label>
+                                <div class="toggle-group">
+                                    <button type="button" class="toggle-btn-action active" data-action="refill">Refill</button>
+                                    <button type="button" class="toggle-btn-action" data-action="brandNew">Brand New</button>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Quantity</label>
+                                <div class="quantity-control">
+                                    <button type="button" class="qty-btn" id="decreaseQty">-</button>
+                                    <input type="number" id="quantity" value="1" min="1" readonly>
+                                    <button type="button" class="qty-btn" id="increaseQty">+</button>
+                                </div>
+                            </div>
+                            
+                            <div class="subtotal">
+                                <span class="subtotal-label">Subtotal:</span>
+                                <span class="subtotal-value" id="subtotal">₱25</span>
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button type="button" class="btn-add" id="addOrderBtn">Add to Order</button>
+                                <button type="button" class="btn-reset" id="resetBtn">Reset</button>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="deliveryAddress">Delivery Address:</label>
+                            <textarea id="deliveryAddress" rows="3"></textarea>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="useDefaultAddress">
+                                <label for="useDefaultAddress">Use Default Address</label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="paymentMethod">Payment Method:</label>
+                            <select id="paymentMethod">
+                                <option value="cash">Cash</option>
+                                <option value="gcash">GCash</option>
+                                <option value="loan">Loan</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="deliveryMethod">Delivery Method:</label>
+                            <select id="deliveryMethod">
+                                <option value="pickup">Pickup</option>
+                                <option value="delivery">Delivery</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Order Preview -->
+                    <div class="order-preview-section">
+                        <div class="preview-card">
+                            <h3 class="preview-card-title">Order Preview</h3>
+                            
+                            <div class="order-list" id="orderList">
+                                <div class="order-list-empty">
+                                    <p>No orders yet.</p>
+                                    <p class="order-list-hint">Add items from the order form</p>
+                                </div>
+                            </div>
+                            
+                            <div class="wilkins-section">
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="additionalWilkins">
+                                    <label for="additionalWilkins">Additional Wilkins (Refill)</label>
+                                </div>
+                                <div class="quantity-control small" id="wilkinsControl" style="display: none;">
+                                    <button type="button" class="qty-btn" id="decreaseWilkins">-</button>
+                                    <input type="number" id="wilkinsQty" value="1" min="1" readonly>
+                                    <button type="button" class="qty-btn" id="increaseWilkins">+</button>
+                                </div>
+                                <div class="wilkins-price" id="wilkinsPrice">₱20</div>
+                            </div>
+                            
+                            <div class="order-summary">
+                                <div class="summary-row">
+                                    <span class="summary-label">Containers:</span>
+                                    <span class="summary-value" id="containersTotal">₱0</span>
+                                </div>
+                                <div class="summary-row">
+                                    <span class="summary-label">Additional Wilkins:</span>
+                                    <span class="summary-value" id="wilkinsTotal">₱0</span>
+                                </div>
+                                <div class="summary-row total">
+                                    <span class="summary-label">Total Amount:</span>
+                                    <span class="summary-value" id="grandTotal">₱0</span>
+                                </div>
+                            </div>
+                            
+                            <div class="capacity-display">
+                                <div class="capacity-info">
+                                    <span class="capacity-label">Available Capacity Today:</span>
+                                    <span class="capacity-value" id="availableCapacityDisplay">--</span>
+                                    <span class="capacity-total" id="capacityTotalDisplay">/ --</span>
+                                </div>
+                                <small class="capacity-hint">Orders remaining for today (refill + brand new)</small>
+                            </div>
+                            
+                            <button type="button" class="btn-place-order" id="placeOrderBtn">Place Order</button>
+                        </div>
+                        
+                        <p class="order-note">Please review your order before placing it.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Modal -->
+        <div class="modal-overlay" id="profileModal">
+            <div class="modal-content profile-modal">
+                <button class="modal-close" onclick="closeProfileModal()">&times;</button>
+                
+                <div class="profile-layout">
+                    <!-- Left Sidebar -->
+                    <div class="profile-sidebar">
+                        <div class="profile-icon-container">
+                            <svg class="profile-icon" viewBox="0 0 24 24" width="80" height="80">
+                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"/>
+                            </svg>
+                        </div>
+                        <h2 class="sidebar-title">My Account</h2>
+                        
+                        <div class="sidebar-menu">
+                            <button class="menu-item active" data-view="manage-profile">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                    <path d="M15 18l-3-3-3 3h6zm-2-5v-2h2v2h-2z"/>
+                                </svg>
+                                Manage Profile
+                            </button>
+                            <button class="menu-item" data-view="order-history">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                    <path d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/>
+                                </svg>
+                                Order History
+                            </button>
+                            <button class="menu-item logout-item" data-view="logout">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                    <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.59L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+                                </svg>
+                                Logout
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Content Area -->
+                    <div class="profile-content">
+                        <!-- Manage Profile View -->
+                        <div id="manageProfileView" class="profile-view active">
+                            <h2 class="content-title">Manage Profile</h2>
+                            <form id="profileForm" class="profile-form">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>First Name</label>
+                                        <input type="text" id="profileFirstName" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Last Name</label>
+                                        <input type="text" id="profileLastName" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Username</label>
+                                        <input type="text" id="profileUsername" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Phone Number</label>
+                                        <input type="tel" id="profilePhone" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <input type="email" id="profileEmail" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Customer Type</label>
+                                        <div class="radio-group">
+                                            <label class="radio-label">
+                                                <input type="radio" name="profileCustomerType" value="regular" checked>
+                                                <span>Regular</span>
+                                            </label>
+                                            <label class="radio-label">
+                                                <input type="radio" name="profileCustomerType" value="dealer">
+                                                <span>Dealer</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group full-width">
+                                        <label>Address</label>
+                                        <textarea id="profileAddress" rows="3" required></textarea>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Current Password</label>
+                                        <div class="password-wrapper">
+                                            <input type="password" id="profileCurrentPassword">
+                                            <button type="button" class="toggle-password" id="toggleProfileCurrentPassword">
+                                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                    <circle cx="12" cy="12" r="3"></circle>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <span class="error-message" id="profileCurrentPasswordError"></span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>New Password</label>
+                                        <div class="password-wrapper">
+                                            <input type="password" id="profileNewPassword">
+                                            <button type="button" class="toggle-password" id="toggleProfileNewPassword">
+                                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                    <circle cx="12" cy="12" r="3"></circle>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <div class="password-strength" id="profilePasswordStrength" style="display: none;">
+                                            <div class="strength-bar">
+                                                <div class="strength-fill" id="profileStrengthFill"></div>
+                                            </div>
+                                            <span class="strength-text" id="profileStrengthText"></span>
+                                        </div>
+                                        <span class="error-message" id="profilePasswordError"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Confirm New Password</label>
+                                        <div class="password-wrapper">
+                                            <input type="password" id="profileConfirmPassword">
+                                            <button type="button" class="toggle-password" id="toggleProfileConfirmPassword">
+                                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                    <circle cx="12" cy="12" r="3"></circle>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <span class="error-message" id="profileConfirmPasswordError"></span>
+                                    </div>
+                                </div>
+                                
+                                <button type="submit" class="btn-save">
+                                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                        <path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/>
+                                    </svg>
+                                    Save Changes
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <!-- Order History View -->
+                        <div id="orderHistoryView" class="profile-view">
+                            <h2 class="content-title">Order History</h2>
+                            <div class="order-history-table-container">
+                                <table class="order-history-table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>DATE</th>
+                                            <th>TOTAL</th>
+                                            <th>STATUS</th>
+                                            <th>ACTIONS</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="orderHistoryBody">
+                                        <!-- Orders will be populated here -->
+                                    </tbody>
+                                </table>
+                                <div id="noOrdersMessage" style="display: none; text-align: center; padding: 40px; color: #999;">
+                                    <p>No previous orders yet</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Order Details View -->
+                        <div id="orderDetailsView" class="profile-view">
+                            <button class="btn-back" onclick="goBackToOrderHistory()">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.42-1.41L7.83 13H20v-2z"/>
+                                </svg>
+                                Back to Order History
+                            </button>
+                            <h2 class="content-title">Order Details</h2>
+                            <div id="orderDetailsContent">
+                                <!-- Order details will be populated here -->
+                            </div>
+                        </div>
+                        
+                        <!-- Feedback View -->
+                        <div id="feedbackView" class="profile-view">
+                            <button class="btn-back" onclick="goBackToOrderDetails()">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.42-1.41L7.83 13H20v-2z"/>
+                                </svg>
+                                Back
+                            </button>
+                            <div class="feedback-container">
+                                <svg class="feedback-icon" viewBox="0 0 24 24" width="60" height="60">
+                                    <path d="M20 2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h4l4 4 4-4h4c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" fill="currentColor"/>
+                                </svg>
+                                <h2 class="content-title">We Value Your Opinion</h2>
+                                <p class="feedback-subtitle">How would you rate your overall experience?</p>
+                                
+                                <div class="star-rating">
+                                    <svg class="star" data-rating="1" viewBox="0 0 24 24" width="40" height="40">
+                                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="currentColor"/>
+                                    </svg>
+                                    <svg class="star" data-rating="2" viewBox="0 0 24 24" width="40" height="40">
+                                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="currentColor"/>
+                                    </svg>
+                                    <svg class="star" data-rating="3" viewBox="0 0 24 24" width="40" height="40">
+                                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="currentColor"/>
+                                    </svg>
+                                    <svg class="star" data-rating="4" viewBox="0 0 24 24" width="40" height="40">
+                                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="currentColor"/>
+                                    </svg>
+                                    <svg class="star" data-rating="5" viewBox="0 0 24 24" width="40" height="40">
+                                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" fill="currentColor"/>
+                                    </svg>
+                                </div>
+                                
+                                <p class="feedback-hint">Kindly take a moment to tell us what you think. (optional)</p>
+                                
+                                <textarea id="feedbackText" class="feedback-textarea" rows="5" placeholder="Share your feedback here..."></textarea>
+                                
+                                <button class="btn-submit-feedback" onclick="submitFeedback()">
+                                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                                    </svg>
+                                    Share My Feedback
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logout Confirmation Modal -->
+        <div class="modal-overlay" id="logoutConfirmModal">
+            <div class="modal-content logout-confirmation-modal">
+                <div class="logout-confirmation-content">
+                    <div class="logout-confirmation-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.59L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+                        </svg>
+                    </div>
+                    <h3 class="logout-confirmation-title">Are You Sure?</h3>
+                    <p class="logout-confirmation-message">You are about to log out of your account. Do you want to continue?</p>
+                    <div class="logout-confirmation-buttons">
+                        <button class="btn-cancel-logout" onclick="closeLogoutConfirm()">Cancel</button>
+                        <button class="btn-confirm-logout" onclick="confirmLogout()">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Save Confirmation Modal -->
+        <div class="modal-overlay" id="profileSaveConfirmModal">
+            <div class="modal-content profile-save-confirmation-modal">
+                <div class="logout-confirmation-content">
+                    <div class="logout-confirmation-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                        </svg>
+                    </div>
+                    <h3 class="logout-confirmation-title">Save Profile Changes?</h3>
+                    <p class="logout-confirmation-message">Are you sure you want to save new profile details?</p>
+                    <div class="logout-confirmation-buttons">
+                        <button class="btn-cancel-logout" onclick="closeProfileSaveConfirm()">Cancel</button>
+                        <button class="btn-confirm-save-profile" onclick="confirmSaveProfile()">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedback Thank You Modal -->
+        <div class="modal-overlay" id="feedbackThankYouModal">
+            <div class="modal-content feedback-thankyou-modal">
+                <div class="logout-confirmation-content">
+                    <div class="logout-confirmation-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                    </div>
+                    <h3 class="logout-confirmation-title">Thank You!</h3>
+                    <p class="logout-confirmation-message">Thank you for your feedback! We appreciate your input.</p>
+                    <div class="logout-confirmation-buttons">
+                        <button class="btn-confirm-save-profile" onclick="closeFeedbackThankYou()" style="width: 100%;">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cancel Order Confirmation Modal -->
+        <div class="modal-overlay" id="cancelOrderConfirmModal">
+            <div class="modal-content cancel-order-confirmation-modal">
+                <div class="logout-confirmation-content">
+                    <div class="logout-confirmation-icon">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                        </svg>
+                    </div>
+                    <h3 class="logout-confirmation-title">Cancel Order?</h3>
+                    <p class="logout-confirmation-message">Are you sure you want to cancel this order?</p>
+                    <div class="logout-confirmation-buttons">
+                        <button class="btn-cancel-logout" onclick="closeCancelOrderConfirm()">Cancel</button>
+                        <button class="btn-confirm-cancel-order" onclick="confirmCancelOrder()">Yes, Cancel Order</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Operating Hours Modal -->
+    <div class="modal-overlay" id="operatingHoursModal" style="display: none;">
+        <div class="modal-content operating-hours-modal">
+            <button class="modal-close" onclick="closeOperatingHoursModal()">&times;</button>
+            <div class="operating-hours-modal-header">
+                <svg class="operating-hours-icon" viewBox="0 0 24 24" width="32" height="32">
+                    <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2.5"/>
+                    <polyline points="12 6 12 12 16 14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                </svg>
+                <h2 class="operating-hours-title">Operating Hours</h2>
+            </div>
+            <div class="operating-hours-content">
+                <div class="operating-hours-info">
+                    <div class="hours-display">
+                        <h3 class="hours-title">Operating Time</h3>
+                        <div class="hours-item">
+                            <span class="hours-label">Opening Time:</span>
+                            <span class="hours-value" id="customerOpeningTime">--:--</span>
+                        </div>
+                        <div class="hours-item">
+                            <span class="hours-label">Closing Time:</span>
+                            <span class="hours-value" id="customerClosingTime">--:--</span>
+                        </div>
+                    </div>
+                    <div class="days-display">
+                        <h3 class="days-label">Operating Days</h3>
+                        <div class="days-list" id="customerOperatingDays">
+                            <!-- Days will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Maintenance Notice Modal -->
+    <div class="modal-overlay" id="maintenanceNoticeModal" style="display: none;">
+        <div class="modal-content maintenance-notice-modal">
+            <button class="modal-close" onclick="closeMaintenanceNoticeModal()">&times;</button>
+            <div class="maintenance-modal-header">
+                <svg class="maintenance-modal-icon" viewBox="0 0 24 24" width="56" height="56">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" fill="currentColor"/>
+                </svg>
+                <h2 class="maintenance-modal-title" id="maintenanceModalTitle">Maintenance Notice</h2>
+            </div>
+            <div class="maintenance-modal-content">
+                <div class="maintenance-notice-display" id="maintenanceNoticeDisplay">
+                    <div class="maintenance-loading" id="maintenanceLoading">Loading maintenance notice...</div>
+                    <div class="maintenance-content" id="maintenanceContent" style="display: none;">
+                        <div class="maintenance-message" id="maintenanceMessage"></div>
+                        <div class="maintenance-dates" id="maintenanceDates"></div>
+                    </div>
+                    <div class="maintenance-empty" id="maintenanceEmpty" style="display: none;">
+                        <p>No active maintenance notice at this time.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Maintenance Icon -->
+    <button class="floating-maintenance-icon" id="floatingMaintenanceIcon" onclick="openMaintenanceNoticeModal()" aria-label="View Maintenance Notice">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+        </svg>
+    </button>
+
+    <script src="../assets/js/localMockSeed.js"></script>
+    <script src="assets/js/api.js"></script>
+    <script src="assets/js/constants.js"></script>
+    <script src="assets/js/navigation.js"></script>
+    <script src="assets/js/homepage.js"></script>
+    <script src="assets/js/guide.js"></script>
+</body>
+</html>

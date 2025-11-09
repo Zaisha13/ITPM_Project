@@ -1,0 +1,353 @@
+﻿/* ============================================
+   SIDEBAR - Modern & Professional
+   ============================================ */
+.sidebar {
+    background: linear-gradient(180deg, var(--primary-dark) 0%, var(--primary-blue) 100%);
+    color: var(--white);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100vh;
+    overflow: hidden;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Collapsed sidebar state */
+.sidebar.collapsed {
+    width: 80px;
+}
+
+/* Hover to expand functionality */
+.sidebar.collapsed:hover {
+    width: 280px;
+    z-index: 1001;
+}
+
+.sidebar.collapsed:hover .brand-text {
+    display: inline;
+    opacity: 1;
+    width: auto;
+}
+
+.sidebar.collapsed:hover .menu-item span:not(.menu-icon) {
+    display: inline;
+    opacity: 1;
+    width: auto;
+}
+
+.sidebar.collapsed:hover .logout-text {
+    display: inline;
+    opacity: 1;
+    width: auto;
+}
+
+.sidebar.collapsed:hover .brand {
+    justify-content: flex-start;
+    padding: 24px 20px;
+}
+
+.sidebar.collapsed:hover .menu-item {
+    justify-content: flex-start;
+    padding: 14px 16px;
+}
+
+.sidebar.collapsed:hover .btn-logout {
+    justify-content: center;
+    padding: 14px 18px;
+}
+
+/* Hide tooltips when hovering over collapsed sidebar (since we show full text) */
+.sidebar.collapsed:hover .menu-item::after {
+    display: none;
+}
+
+.sidebar.collapsed .brand-text,
+.sidebar.collapsed .menu-item span:not(.menu-icon),
+.sidebar.collapsed .logout-text {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.sidebar.collapsed .brand {
+    justify-content: center;
+    padding: 24px 12px;
+}
+
+.sidebar.collapsed .brand-text {
+    display: none;
+}
+
+.sidebar.collapsed .menu-item {
+    justify-content: center;
+    padding: 14px;
+}
+
+.sidebar.collapsed .menu-item span {
+    display: none;
+}
+
+/* Tooltip for collapsed menu items */
+.sidebar.collapsed .menu-item {
+    position: relative;
+}
+
+.sidebar.collapsed .menu-item::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 100%;
+    margin-left: 12px;
+    background: var(--primary-dark);
+    color: var(--white);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-10px);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.sidebar.collapsed .menu-item:hover::after {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.sidebar.collapsed .btn-logout {
+    justify-content: center;
+    padding: 14px;
+}
+
+.sidebar.collapsed .btn-logout .logout-text {
+    display: none;
+}
+
+.sidebar.collapsed .sidebar-toggle svg {
+    transform: rotate(180deg);
+}
+
+.sidebar-toggle {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: var(--white);
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
+    margin-left: auto;
+    border: 1px solid transparent;
+}
+
+/* Hide toggle button when collapsed */
+.sidebar.collapsed .sidebar-toggle {
+    display: none;
+}
+
+.sidebar-toggle:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+
+.sidebar-toggle svg {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 24px 20px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    font-size: 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+    transition: padding 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.brand-icon { 
+    color: var(--white);
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    flex-shrink: 0;
+}
+
+.brand-text {
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 16px 12px 90px 12px;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0;
+}
+
+/* Custom scrollbar for menu */
+.menu::-webkit-scrollbar {
+    width: 6px;
+}
+
+.menu::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+}
+
+.menu::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+}
+
+.menu::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.menu-item {
+    text-align: left;
+    padding: 14px 16px;
+    border: none;
+    color: rgba(255, 255, 255, 0.9);
+    background: transparent;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: 0.3px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.menu-item span:not(.menu-icon) {
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.menu-icon {
+    flex-shrink: 0;
+    stroke: rgba(255, 255, 255, 0.8);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.menu-item:hover .menu-icon,
+.menu-item.active .menu-icon {
+    stroke: var(--white);
+    transform: scale(1.1);
+}
+
+.menu-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 3px;
+    background: var(--accent-teal);
+    transform: scaleY(0);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.menu-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--white);
+    transform: translateX(4px);
+}
+
+.menu-item:hover::before {
+    transform: scaleY(1);
+}
+
+.menu-item.active {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%);
+    color: var(--white);
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.menu-item.active::before {
+    transform: scaleY(1);
+}
+
+.sidebar-footer { 
+    position: absolute; 
+    left: 12px; 
+    right: 12px; 
+    bottom: 12px; 
+    z-index: 10;
+    padding: 12px 0;
+    background: transparent;
+    border-radius: 12px;
+}
+
+.btn-logout {
+    width: 100%;
+    background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+    color: var(--white);
+    border: none;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-logout:hover { 
+    transform: translateY(-2px); 
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4); 
+    background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
+}
+
+.btn-logout svg {
+    flex-shrink: 0;
+}
+
+.logout-text {
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+    overflow: visible;
+    opacity: 1;
+    width: auto;
+    display: inline;
+}
+
+/* Ensure logout text is visible when sidebar is expanded (not collapsed) */
+.sidebar:not(.collapsed) .logout-text {
+    display: inline !important;
+    opacity: 1 !important;
+    width: auto !important;
+    overflow: visible !important;
+}
+

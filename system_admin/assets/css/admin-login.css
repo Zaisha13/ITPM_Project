@@ -1,0 +1,201 @@
+.admin-login-container {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(10, 17, 26, 0.75);
+  backdrop-filter: blur(6px);
+  z-index: 10000;
+}
+
+.admin-login-container.is-visible {
+  display: flex;
+}
+
+.admin-login-container .login-modal {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 32px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 24px 60px rgba(12, 22, 35, 0.24);
+  position: relative;
+}
+
+.admin-login-container .modal-exit-btn {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: rgba(20, 32, 51, 0.08);
+  color: #142033;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease, color 0.2s ease;
+  padding: 0;
+}
+
+.admin-login-container .modal-exit-btn:hover {
+  background: rgba(11, 120, 208, 0.18);
+  color: #0b78d0;
+  transform: translateY(-1px);
+}
+
+.admin-login-container .modal-exit-btn:active {
+  transform: translateY(0);
+}
+
+.admin-login-container .modal-exit-btn svg {
+  stroke: currentColor;
+  stroke-width: 2;
+  fill: none;
+}
+
+.admin-login-container .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.admin-login-container .modal-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.admin-login-container .modal-icon {
+  color: #0b78d0;
+}
+
+.admin-login-container .modal-header h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #142033;
+  margin: 0;
+}
+
+.admin-login-container .modal-subtitle {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #4a5b76;
+}
+
+.admin-login-container .form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.admin-login-container .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-login-container .form-group label {
+  font-weight: 600;
+  color: #142033;
+  font-size: 0.95rem;
+}
+
+.admin-login-container .form-group input {
+  border: 1px solid rgba(20, 32, 51, 0.16);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 0.95rem;
+  color: #142033;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-login-container .form-group input:focus {
+  outline: none;
+  border-color: #0b78d0;
+  box-shadow: 0 0 0 3px rgba(11, 120, 208, 0.12);
+}
+
+.admin-login-container .btn-submit {
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #0b78d0, #0f8adf);
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 12px 18px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-login-container .btn-submit:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 20px rgba(11, 120, 208, 0.2);
+}
+
+.admin-login-container .btn-submit:active {
+  transform: translateY(0);
+}
+
+.admin-login-container .error-message {
+  min-height: 1.25rem;
+  font-size: 0.9rem;
+  color: #c62828;
+  text-align: center;
+  margin: 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.admin-login-container .error-message.is-visible {
+  opacity: 1;
+}
+
+.admin-login-container .credential-hint {
+  margin-top: 20px;
+  padding: 14px;
+  border-radius: 10px;
+  background: rgba(11, 120, 208, 0.08);
+  border: 1px solid rgba(11, 120, 208, 0.16);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-login-container .credential-hint .hint-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #0b78d0;
+  letter-spacing: 0.05em;
+}
+
+.admin-login-container .credential-hint .hint-values {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.admin-login-container .credential-hint code {
+  background: #ffffff;
+  color: #142033;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 0.9rem;
+  font-family: 'Fira Code', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  border: 1px solid rgba(20, 32, 51, 0.12);
+}
+

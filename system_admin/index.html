@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Avenue — Admin</title>
+    <link rel="stylesheet" href="assets/css/admin.css">
+    <link rel="stylesheet" href="assets/css/admin-login.css">
+    <link rel="stylesheet" href="../customer_portal/assets/css/order.css">
+</head>
+<body>
+    <div id="adminLoginContainer" class="admin-login-container" aria-hidden="true">
+        <div class="login-modal" role="dialog" aria-modal="true" aria-labelledby="adminLoginTitle" aria-describedby="adminLoginSubtitle">
+            <button type="button" class="modal-exit-btn" id="adminLoginExitBtn" aria-label="Exit admin portal">
+                <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+                <span class="sr-only">Close</span>
+            </button>
+            <div class="modal-header">
+                <svg class="modal-icon" viewBox="0 0 24 24" width="48" height="48" aria-hidden="true">
+                    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" fill="currentColor"/>
+                </svg>
+                <h2 id="adminLoginTitle">Admin Portal Login</h2>
+                <p id="adminLoginSubtitle" class="modal-subtitle">Sign in to manage Water Avenue operations.</p>
+            </div>
+            <form id="adminLoginForm" class="form" novalidate>
+                <div class="form-group">
+                    <label for="adminLoginUsername">Username or Email</label>
+                    <input type="text" id="adminLoginUsername" name="adminLoginUsername" placeholder="Enter admin username" autocomplete="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="adminLoginPassword">Password</label>
+                    <input type="password" id="adminLoginPassword" name="adminLoginPassword" placeholder="Enter password" autocomplete="current-password" required>
+                </div>
+                <p id="adminLoginError" class="error-message" role="alert" aria-live="assertive"></p>
+                <button type="submit" class="btn-submit">Login</button>
+            </form>
+            <div class="credential-hint">
+                <span class="hint-title">Default credentials</span>
+                <div class="hint-values">
+                    <code>water_avenue</code>
+                    <code>admin123</code>
+                    <code>water_avenue@gmail.com</code>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <svg class="brand-icon" viewBox="0 0 24 24" width="28" height="28">
+                    <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" fill="currentColor"/>
+                </svg>
+                <span class="brand-text">Water Avenue</span>
+                <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M15 18l-6-6 6-6"/>
+                    </svg>
+                </button>
+            </div>
+
+            <nav class="menu">
+                <button class="menu-item active" data-view="dashboard" data-tooltip="Dashboard">
+                    <svg class="menu-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                    <span>Dashboard</span>
+                </button>
+                <button class="menu-item" data-view="manual-entry" data-tooltip="Manual Entry">
+                    <svg class="menu-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                    <span>Manual Entry</span>
+                </button>
+                <button class="menu-item" data-view="admin-mgmt" data-tooltip="Admin Management">
+                    <svg class="menu-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    <span>Admin Management</span>
+                </button>
+                <button class="menu-item" data-view="system-config" data-tooltip="System Configuration">
+                    <svg class="menu-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M12 1v6m0 6v6M5.64 5.64l4.24 4.24m4.24 4.24l4.24 4.24M1 12h6m6 0h6M5.64 18.36l4.24-4.24m4.24-4.24l4.24-4.24"></path>
+                    </svg>
+                    <span>System Configuration</span>
+                </button>
+                <button class="menu-item" data-view="orders" data-tooltip="Orders">
+                    <svg class="menu-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 11l3 3L22 4"></path>
+                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                    </svg>
+                    <span>Orders</span>
+                </button>
+                <button class="menu-item" data-view="loans" data-tooltip="Loans">
+                    <svg class="menu-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                    <span>Loans</span>
+                </button>
+                <button class="menu-item" data-view="logbook" data-tooltip="Logbook">
+                    <svg class="menu-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    </svg>
+                    <span>Logbook</span>
+                </button>
+                <button class="menu-item" data-view="reports" data-tooltip="Reports">
+                    <svg class="menu-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                    <span>Reports</span>
+                </button>
+                <button class="menu-item" data-view="feedback" data-tooltip="Feedback">
+                    <svg class="menu-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <span>Feedback</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button id="logoutBtn" class="btn-logout">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    <span class="logout-text">Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="content">
+            <header class="topbar">
+                <h1 class="page-title">Admin Dashboard</h1>
+                <div class="welcome">Welcome back, <span id="adminName">Admin</span></div>
+            </header>
+
+            <div id="view-dashboard" data-view="dashboard">
+            <div class="dashboard-top-row">
+                <section class="stock-overview compact">
+                    <h2 class="section-title">Stock Overview</h2>
+                    <div class="cards compact">
+                        <div class="card compact card-gallons">
+                            <div class="card-icon">💧</div>
+                            <div class="card-label">Available Gallons</div>
+                            <div class="card-value" id="availableGallons">0</div>
+                        </div>
+                        <div class="card compact card-round clickable-card" data-container-type="2" data-container-name="Round Containers" data-action="edit-stock">
+                            <div class="card-icon">🧴</div>
+                            <div class="card-label">Round Containers</div>
+                            <div class="card-value" id="roundContainers">0</div>
+                        </div>
+                        <div class="card compact card-slim clickable-card" data-container-type="1" data-container-name="Slim Containers" data-action="edit-stock">
+                            <div class="card-icon">🫙</div>
+                            <div class="card-label">Slim Containers</div>
+                            <div class="card-value" id="slimContainers">0</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="todays-orders compact">
+                    <h2 class="section-title">Today's Orders</h2>
+                    <div class="calendar" id="calendar"></div>
+                </section>
+            </div>
+
+            <section class="orders-per-day">
+                <div class="orders-panel">
+                    <div class="orders-header">
+                        <h3 id="ordersForDate">Select a date from the calendar</h3>
+                        <div class="orders-header-actions">
+                            <div class="orders-count" id="ordersCount">0</div>
+                            <button type="button" class="orders-refresh-btn" id="ordersRefreshBtn" aria-label="Refresh pending orders" title="Refresh pending orders">
+                                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                                    <path d="M21 12a9 9 0 1 1-2.64-6.36" />
+                                    <polyline points="21 5 21 12 14 12" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="ordersList" class="orders-list"></div>
+                </div>
+            </section>
+            </div>
+
+            <!-- Manual Entry View -->
+            <div id="view-manual-entry" data-view="manual-entry" style="display:none">
+                <div class="manual-entry-container">
+                    <div class="manual-entry-wrapper">
+                        <!-- Customer Information Card -->
+                        <div class="customer-info-card">
+                            <!-- Customer Search Section -->
+                            <div class="customer-search-section">
+                                <label class="section-label">Search Customer</label>
+                                <div class="customer-search-grid">
+                                    <div class="customer-field-group customer-field-group-with-button">
+                                        <label for="adminCustomerSearch" class="field-label">Username or Email</label>
+                                        <div class="search-input-wrapper">
+                                            <input type="text" id="adminCustomerSearch" class="customer-field-input" placeholder="Type username or email...">
+                                            <button type="button" id="adminCustomerSearchBtn" class="search-button" title="Search customer">
+                                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <circle cx="11" cy="11" r="8"></circle>
+                                                    <path d="m21 21-4.35-4.35"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <div id="adminCustomerSearchResults" class="customer-search-results" style="display: none;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Customer Details Section -->
+                            <div class="customer-details-section">
+                                <input type="hidden" id="adminCustomerId">
+                                <label class="section-label">Customer Details</label>
+                                <div class="customer-fields-grid">
+                                    <div class="customer-field-group">
+                                        <label for="adminFirstName" class="field-label">First Name</label>
+                                        <input type="text" id="adminFirstName" class="customer-field-input" placeholder="Enter first name">
+                                    </div>
+                                    <div class="customer-field-group">
+                                        <label for="adminLastName" class="field-label">Last Name</label>
+                                        <input type="text" id="adminLastName" class="customer-field-input" placeholder="Enter last name">
+                                    </div>
+                                    <div class="customer-field-group">
+                                        <label for="adminContactNumber" class="field-label">Contact Number</label>
+                                        <input type="tel" id="adminContactNumber" class="customer-field-input" placeholder="Enter contact number">
+                                    </div>
+                                    <div class="customer-field-group">
+                                        <label for="adminRegularCustomer" class="field-label">Customer Type</label>
+                                        <select id="adminRegularCustomer" class="customer-field-select">
+                                            <option value="regular">Regular</option>
+                                            <option value="dealer">Dealer</option>
+                                        </select>
+                                    </div>
+                                    <div class="customer-field-group customer-field-group-full">
+                                        <label for="adminDeliveryAddress" class="field-label">Address</label>
+                                        <textarea id="adminDeliveryAddress" class="customer-field-input" rows="3" placeholder="Enter delivery address"></textarea>
+                                    </div>
+                                    <div class="customer-field-group">
+                                        <label for="adminDeliveryMethod" class="field-label">Delivery Method</label>
+                                        <select id="adminDeliveryMethod" class="customer-field-select">
+                                            <option value="">Select Delivery Method</option>
+                                            <option value="pickup">Pickup</option>
+                                            <option value="delivery">Delivery</option>
+                                        </select>
+                                    </div>
+                                    <div class="customer-field-group">
+                                        <label for="adminPaymentMethod" class="field-label">Payment Method</label>
+                                        <select id="adminPaymentMethod" class="customer-field-select">
+                                            <option value="cash">Cash</option>
+                                            <option value="gcash">GCash</option>
+                                            <option value="loan">Loan</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Order Section -->
+                        <div class="order-layout">
+                            <!-- Order Form -->
+                            <div class="order-form-section">
+                                <div class="form-card">
+                                    <h3 class="form-card-title">Order Form</h3>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label">Container Type</label>
+                                        <div class="toggle-group">
+                                            <button type="button" class="toggle-btn" data-type="round">Round</button>
+                                            <button type="button" class="toggle-btn active" data-type="slim">Slim</button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label">Order Type</label>
+                                        <div class="toggle-group">
+                                            <button type="button" class="toggle-btn-action active" data-action="refill">Refill</button>
+                                            <button type="button" class="toggle-btn-action" data-action="brandNew">Brand New</button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label class="form-label">Quantity</label>
+                                        <div class="quantity-control">
+                                            <button type="button" class="qty-btn" id="adminDecreaseQty">-</button>
+                                            <input type="number" id="adminQuantity" value="1" min="1" readonly>
+                                            <button type="button" class="qty-btn" id="adminIncreaseQty">+</button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="subtotal">
+                                        <span class="subtotal-label">Subtotal:</span>
+                                        <span class="subtotal-value" id="adminSubtotal">₱25</span>
+                                    </div>
+                                    
+                                    <div class="form-actions">
+                                        <button type="button" class="btn-add" id="adminAddOrderBtn">Add to Order</button>
+                                        <button type="button" class="btn-reset" id="adminResetBtn">Reset</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Order Preview -->
+                            <div class="order-preview-section">
+                                <div class="preview-card">
+                                    <h3 class="preview-card-title">Order Preview</h3>
+                                    
+                                    <div class="order-list" id="adminOrderList">
+                                        <div class="order-list-empty">
+                                            <p>No orders yet.</p>
+                                            <p class="order-list-hint">Add items from the order form</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="wilkins-section">
+                                        <div class="checkbox-group">
+                                            <input type="checkbox" id="adminAdditionalWilkins">
+                                            <label for="adminAdditionalWilkins">Additional Wilkins (Refill)</label>
+                                        </div>
+                                        <div class="quantity-control small" id="adminWilkinsControl" style="display: none;">
+                                            <button type="button" class="qty-btn" id="adminDecreaseWilkins">-</button>
+                                            <input type="number" id="adminWilkinsQty" value="1" min="1" readonly>
+                                            <button type="button" class="qty-btn" id="adminIncreaseWilkins">+</button>
+                                        </div>
+                                        <div class="wilkins-price" id="adminWilkinsPrice">₱20</div>
+                                    </div>
+                                    
+                                    <div class="order-summary">
+                                        <div class="summary-row">
+                                            <span class="summary-label">Containers:</span>
+                                            <span class="summary-value" id="adminContainersTotal">₱0</span>
+                                        </div>
+                                        <div class="summary-row">
+                                            <span class="summary-label">Additional Wilkins:</span>
+                                            <span class="summary-value" id="adminWilkinsTotal">₱0</span>
+                                        </div>
+                                        <div class="summary-row total">
+                                            <span class="summary-label">Total Amount:</span>
+                                            <span class="summary-value" id="adminGrandTotal">₱0</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <button type="button" class="btn-place-order" id="adminPlaceOrderBtn">Place Order</button>
+                                </div>
+                                
+                                <p class="order-note">Please review your order before placing it.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports View -->
+            <div id="view-reports" data-view="reports" style="display:none">
+                <div class="reports-header">
+                    <div class="tabs">
+                        <button class="tab active" data-tab="sales">Sales Reports</button>
+                        <button class="tab" data-tab="cancelled">Cancelled Orders</button>
+                        <button class="tab" data-tab="loans">Loans Reports</button>
+                    </div>
+                </div>
+
+                <!-- Sales Reports Filters -->
+                <div id="sales-filters" class="filters">
+                    <input id="repSearch" type="text" placeholder="Search by customer, ID, or item...">
+                    <input id="repDate" type="date" title="Select date for report">
+                    <button id="repApply" class="btn primary">Apply</button>
+                    <button id="repCollapse" class="btn ghost">Collapse Table</button>
+                    <div class="filter-group">
+                        <label for="repContainer">Container:</label>
+                        <select id="repContainer">
+                            <option>All</option>
+                            <option>Round</option>
+                            <option>Slim</option>
+                            <option>Wilkins</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="repOrderType">Order Type:</label>
+                        <select id="repOrderType">
+                            <option>All</option>
+                            <option>Brand-new</option>
+                            <option>Refill</option>
+                            <option>Mixed Order</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="repPayment">Payment:</label>
+                        <select id="repPayment">
+                            <option>All</option>
+                            <option>Cash</option>
+                            <option>GCash</option>
+                            <option>Loan</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="repFrequency">Frequency:</label>
+                        <select id="repFrequency">
+                            <option>Daily</option>
+                            <option>Weekly</option>
+                            <option>Monthly</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Loans Reports Filters (simplified) -->
+                <div id="loans-filters" class="filters" style="display:none">
+                    <input id="loanSearch" type="text" placeholder="Search loaners...">
+                </div>
+
+                <div id="sales-metrics" class="metric-cards">
+                    <div class="metric"><div class="metric-label">Total Gallons Sold</div><div class="metric-value" id="mGallons">0</div></div>
+                    <div class="metric"><div class="metric-label">Total Customers Served</div><div class="metric-value" id="mCustomers">0</div></div>
+                    <div class="metric"><div class="metric-label">Completed vs. Cancelled</div><div class="metric-value" id="mStatus">0 / 0</div></div>
+                    <div class="metric"><div class="metric-label">Total Revenue</div><div class="metric-value" id="mRevenue">₱0.00</div></div>
+                </div>
+
+                <div id="sales-table" class="data-table admin-table">
+                    <div class="admin-table-header">
+                        <div>Order ID</div>
+                        <div>Customer</div>
+                        <div>Items</div>
+                        <div>Total Amount</div>
+                        <div>Status</div>
+                        <div>Type</div>
+                        <div>Payment Method</div>
+                        <div>Order Date</div>
+                        <div>Last Updated</div>
+                    </div>
+                    <div class="admin-table-body" id="salesRows"></div>
+                </div>
+
+                <div id="cancelled-metrics" class="metric-cards" style="display:none">
+                    <div class="metric"><div class="metric-label">Total Cancelled Orders</div><div class="metric-value" id="cCancelledCount">0</div></div>
+                    <div class="metric"><div class="metric-label">Total Gallons Cancelled</div><div class="metric-value" id="cCancelledGallons">0</div></div>
+                    <div class="metric"><div class="metric-label">Estimated Revenue Lost</div><div class="metric-value" id="cCancelledRevenue">₱0.00</div></div>
+                    <div class="metric"><div class="metric-label">Latest Cancellation</div><div class="metric-value" id="cLatestCancelled">-</div></div>
+                </div>
+
+                <div id="cancelled-table" class="data-table admin-table" style="display:none">
+                    <div class="admin-table-header">
+                        <div>Order ID</div>
+                        <div>Customer</div>
+                        <div>Items</div>
+                        <div>Total Amount</div>
+                        <div>Status</div>
+                        <div>Payment Status</div>
+                        <div>Type</div>
+                        <div>Payment Method</div>
+                        <div>Order Date</div>
+                        <div>Cancelled On</div>
+                    </div>
+                    <div class="admin-table-body" id="cancelledRows"></div>
+                </div>
+
+                <div id="loans-content" style="display:none">
+                    <div class="metric-cards">
+                        <div class="metric"><div class="metric-label">Total Outstanding Loan</div><div class="metric-value" id="mOutstanding">₱0.00</div></div>
+                        <div class="metric"><div class="metric-label">Repayment within 15 Days</div><div class="metric-value" id="mRepayRate">0%</div></div>
+                    </div>
+
+                    <h3 class="section-title" style="margin-top:16px">Good Payers (repaid within 15 days)</h3>
+                    <div class="data-table compact admin-table">
+                        <div class="admin-table-header">
+                            <div>Order ID</div>
+                            <div>Customer</div>
+                            <div>Amount Paid</div>
+                            <div>Order Date</div>
+                            <div>Days Taken</div>
+                        </div>
+                        <div class="admin-table-body" id="goodRows"></div>
+                    </div>
+
+                    <h3 class="section-title" style="margin-top:16px">Loan Orders (Old / New)</h3>
+                    <input id="loanSearch" type="text" class="loan-search" placeholder="Search loaners...">
+                    <div class="data-table admin-table" id="loan-orders-table">
+                        <div class="admin-table-header">
+                            <div>Order ID</div>
+                            <div>Customer</div>
+                            <div>Amount</div>
+                            <div>Payment Status</div>
+                            <div>Order Status</div>
+                            <div>Order Date</div>
+                            <div>Days Old</div>
+                        </div>
+                        <div class="admin-table-body" id="loanRows"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders View -->
+            <div id="view-orders" data-view="orders" style="display:none">
+                <!-- Header Bar -->
+                <div class="orders-page-header">
+                    <h1 class="orders-page-title">Orders</h1>
+                </div>
+
+                <!-- Filter Card -->
+                <div class="orders-filter-card">
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label>Status:</label>
+                            <select id="ordersFilterStatus">
+                                <option value="All">All</option>
+                                <option value="Confirmed">Confirmed</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Ready for Pickup">Ready for Pickup</option>
+                                <option value="Out for Delivery">Out for Delivery</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Order Type:</label>
+                            <select id="ordersFilterOrderType">
+                                <option value="All">All</option>
+                                <option value="Online">Online</option>
+                                <option value="Walk-in">Walk-in</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Category:</label>
+                            <select id="ordersFilterCategory">
+                                <option value="All">All</option>
+                                <option value="Refill">Refill</option>
+                                <option value="Brand New">Brand New</option>
+                                <option value="Mixed Order">Mixed Order</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Payment:</label>
+                            <select id="ordersFilterPayment">
+                                <option value="All">All</option>
+                                <option value="Cash">Cash</option>
+                                <option value="GCash">GCash</option>
+                                <option value="Loan">Loan</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Date From:</label>
+                            <input type="date" id="ordersFilterDateFrom" class="date-input">
+                        </div>
+                        <div class="filter-group">
+                            <label>To:</label>
+                            <input type="date" id="ordersFilterDateTo" class="date-input">
+                        </div>
+                        <div class="filter-actions">
+                            <button class="btn-apply" id="ordersApplyBtn">Apply</button>
+                            <button class="btn-reset" id="ordersResetBtn">Reset</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Approved Orders Table -->
+                <section class="orders-table-section">
+                    <div class="orders-table-card">
+                        <div class="orders-table-card-header">
+                            <h2 class="orders-table-card-title">Approved Orders</h2>
+                            <p class="orders-table-card-subtitle">Orders visible here are already approved and synced with the customer portal.</p>
+                        </div>
+                        <div class="orders-table-wrapper">
+                            <table class="orders-table" aria-describedby="approvedOrdersHelpText">
+                                <caption id="approvedOrdersHelpText" class="sr-only">Approved orders with admin controls for updating order status.</caption>
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Order ID</th>
+                                        <th scope="col">Customer Name</th>
+                                        <th scope="col">Order Type</th>
+                                        <th scope="col">Receiving Method</th>
+                                        <th scope="col">Mode of Payment</th>
+                                        <th scope="col">Total</th>
+                                        <th scope="col">Payment Status</th>
+                                        <th scope="col">Order Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="approvedOrdersTableBody">
+                                    <tr class="orders-empty-row">
+                                        <td class="orders-empty-state" colspan="8">Loading approved orders...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Order Details Modal -->
+                <div id="orderDetailsModal" class="order-details-modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="orderDetailsModalHeading">
+                    <div class="order-details-modal__dialog" role="document">
+                        <h2 id="orderDetailsModalHeading" class="sr-only">Order details</h2>
+                        <button type="button" id="orderDetailsModalClose" class="order-details-modal__close" aria-label="Close order details">
+                            <svg class="order-details-modal__close-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+                                <line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"></line>
+                            </svg>
+                        </button>
+                        <div id="orderDetailsContent" class="order-details-modal__content">
+                            <div class="order-empty-state">
+                                <p>Select an order row to preview its details.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Loans View -->
+            <div id="view-loans" data-view="loans" style="display:none">
+                <!-- Header Bar -->
+                <div class="loans-page-header">
+                    <h1 class="loans-page-title">Loans Management</h1>
+                    <div class="loans-header-actions">
+                        <button class="btn-view-reports" id="loansViewReportsBtn" title="View Loans Reports">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="20" x2="18" y2="10"></line>
+                                <line x1="12" y1="20" x2="12" y2="4"></line>
+                                <line x1="6" y1="20" x2="6" y2="14"></line>
+                            </svg>
+                            <span>View Reports</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Summary Cards -->
+                <div class="loans-stats">
+                    <div class="stat-card loans-stat-card">
+                        <div class="stat-icon stat-icon-red">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="1" x2="12" y2="23"></line>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-label">Total Outstanding</div>
+                        <div class="stat-value" id="loansTotalOutstanding">₱0.00</div>
+                    </div>
+                    <div class="stat-card loans-stat-card">
+                        <div class="stat-icon stat-icon-blue">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 11l3 3L22 4"></path>
+                                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-label">Total Loan Orders</div>
+                        <div class="stat-value" id="loansTotalOrders">0</div>
+                    </div>
+                    <div class="stat-card loans-stat-card">
+                        <div class="stat-icon stat-icon-green">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                        </div>
+                        <div class="stat-label">Paid Loans</div>
+                        <div class="stat-value" id="loansPaidCount">0</div>
+                    </div>
+                    <div class="stat-card loans-stat-card">
+                        <div class="stat-icon stat-icon-yellow">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                        </div>
+                        <div class="stat-label">Repayment Rate (15 days)</div>
+                        <div class="stat-value" id="loansRepayRate">0%</div>
+                    </div>
+                </div>
+
+                <!-- Filter Card -->
+                <div class="loans-filter-card">
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label>Payment Status:</label>
+                            <select id="loansFilterPaymentStatus">
+                                <option value="All">All</option>
+                                <option value="Paid">Paid</option>
+                                <option value="Pending">Pending</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Order Status:</label>
+                            <select id="loansFilterOrderStatus">
+                                <option value="All">All</option>
+                                <option value="Confirmed">Confirmed</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Ready for Pickup">Ready for Pick Up</option>
+                                <option value="Out for Delivery">Out for Delivery</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Date From:</label>
+                            <input type="date" id="loansFilterDateFrom" class="date-input">
+                        </div>
+                        <div class="filter-group">
+                            <label>To:</label>
+                            <input type="date" id="loansFilterDateTo" class="date-input">
+                        </div>
+                        <div class="filter-actions">
+                            <input type="text" id="loansSearch" class="loans-search-input" placeholder="Search by customer or order ID...">
+                            <button class="btn-apply" id="loansApplyBtn">Apply</button>
+                            <button class="btn-reset" id="loansResetBtn">Reset</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loans Table -->
+                <section class="orders-table-section loans-table-section">
+                    <div class="orders-table-card">
+                        <div class="orders-table-card-header">
+                            <h2 class="orders-table-card-title">Loan Orders</h2>
+                            <p class="orders-table-card-subtitle">Track outstanding loan orders and recent repayments.</p>
+                        </div>
+                        <div class="orders-table-wrapper">
+                            <table class="orders-table loans-table" aria-describedby="loanOrdersHelpText">
+                                <caption id="loanOrdersHelpText" class="sr-only">Loan orders list with payment and status details.</caption>
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Order ID</th>
+                                        <th scope="col">Customer Name</th>
+                                        <th scope="col">Order Type</th>
+                                        <th scope="col">Total Amount</th>
+                                        <th scope="col">Payment Status</th>
+                                        <th scope="col">Order Status</th>
+                                        <th scope="col">Order Date</th>
+                                        <th scope="col">Days Old</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="loansTableBody">
+                                    <tr class="orders-empty-row">
+                                        <td class="orders-empty-state" colspan="8">Loading loan orders...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Logbook View -->
+            <div id="view-logbook" data-view="logbook" style="display:none">
+                <!-- Customer Logbook Header -->
+                <div class="logbook-header">
+                    <h1 class="logbook-title">Customer Logbook</h1>
+                    <div class="logbook-header-actions">
+                        <input type="text" id="logbookSearch" class="logbook-search" placeholder="Search by name or email...">
+                    </div>
+                </div>
+
+                <!-- Statistical Cards -->
+                <div class="logbook-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon stat-icon-blue">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-label">Total Customers</div>
+                        <div class="stat-value" id="statTotalCustomers">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon stat-icon-green">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="2" y1="12" x2="22" y2="12"></line>
+                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-label">Online Customers</div>
+                        <div class="stat-value" id="statOnlineCustomers">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon stat-icon-yellow">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                <line x1="9" y1="11" x2="11" y2="13"></line>
+                                <line x1="11" y1="13" x2="13" y2="11"></line>
+                            </svg>
+                        </div>
+                        <div class="stat-label">Walk-in Customers</div>
+                        <div class="stat-value" id="statWalkinCustomers">0</div>
+                    </div>
+                </div>
+
+                <!-- Customer Type Tabs -->
+                <div class="logbook-tabs">
+                    <button class="logbook-tab active" data-tab="all">All Customers</button>
+                    <button class="logbook-tab" data-tab="online">Online Customers</button>
+                    <button class="logbook-tab" data-tab="walkin">Walk-in Customers</button>
+                </div>
+
+                <!-- Customers Table -->
+                <section class="orders-table-section logbook-table-section">
+                    <div class="orders-table-card">
+                        <div class="orders-table-card-header logbook-table-card-header">
+                            <div class="logbook-table-card-header-left">
+                                <h2 class="orders-table-card-title" id="logbookTableTitle">All Customers</h2>
+                                <p class="orders-table-card-subtitle">Customer directory with account, contact, and onboarding details.</p>
+                            </div>
+                            <span class="logbook-count-pill" id="logbookCustomerCount">0 customers</span>
+                        </div>
+                        <div class="orders-table-wrapper">
+                            <table class="orders-table logbook-table" aria-describedby="logbookTableDescription">
+                                <colgroup>
+                                    <col class="logbook-col-id">
+                                    <col class="logbook-col-first-name">
+                                    <col class="logbook-col-last-name">
+                                    <col class="logbook-col-account">
+                                    <col class="logbook-col-phone">
+                                    <col class="logbook-col-address">
+                                    <col class="logbook-col-created">
+                                </colgroup>
+                                <caption id="logbookTableDescription" class="sr-only">Customer records listing account identifiers, contact numbers, addresses, and creation dates.</caption>
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Customer ID</th>
+                                        <th scope="col">First Name</th>
+                                        <th scope="col">Last Name</th>
+                                        <th scope="col">Account ID</th>
+                                        <th scope="col">Phone</th>
+                                        <th scope="col">Address</th>
+                                        <th scope="col">Created At</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="logbookCustomersTableBody">
+                                    <tr class="orders-empty-row">
+                                        <td class="orders-empty-state" colspan="7">No customers yet</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Customer Details Modal -->
+                <div class="customer-modal-overlay" id="customerDetailsModal" aria-hidden="true">
+                    <div class="customer-modal" role="dialog" aria-modal="true" aria-labelledby="customerModalTitle">
+                        <button type="button" class="customer-modal-close" id="customerModalClose" aria-label="Close customer details">
+                            &times;
+                        </button>
+                        <div class="customer-modal-content" id="customerModalContent">
+                            <!-- Modal content populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Online Customer Template -->
+                <template id="onlineCustomerTemplate">
+                    <div class="customer-profile-layout">
+                        <aside class="customer-profile-sidebar">
+                            <div class="customer-profile-icon">
+                                <svg viewBox="0 0 24 24" width="64" height="64" aria-hidden="true">
+                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" fill="currentColor"></path>
+                                </svg>
+                            </div>
+                            <h2 class="customer-profile-title" id="customerModalTitle">Manage Profile</h2>
+                            <p class="customer-profile-subtitle">Update account information and credentials for this online customer.</p>
+                            <div class="customer-profile-meta">
+                                <div class="meta-item">
+                                    <span class="meta-label">Customer ID</span>
+                                    <span class="meta-value" data-field-text="CustomerID">-</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="meta-label">Account ID</span>
+                                    <span class="meta-value" data-field-text="AccountID">-</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="meta-label">Created</span>
+                                    <span class="meta-value" data-field-text="CreatedAtFormatted">-</span>
+                                </div>
+                            </div>
+                        </aside>
+                        <section class="customer-profile-main">
+                            <form class="customer-profile-form" data-form-type="online">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>First Name</label>
+                                        <input type="text" name="firstName" data-field-input="FirstName" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Last Name</label>
+                                        <input type="text" name="lastName" data-field-input="LastName" required>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Username</label>
+                                        <input type="text" name="username" data-field-input="Username">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <input type="email" name="email" data-field-input="Email">
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Phone Number</label>
+                                        <input type="tel" name="phone" data-field-input="Phone">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Customer Type</label>
+                                        <div class="radio-group">
+                                            <label class="radio-option">
+                                                <input type="radio" name="customerType" value="Regular" data-field-radio="CustomerTypeName">
+                                                <span>Regular</span>
+                                            </label>
+                                            <label class="radio-option">
+                                                <input type="radio" name="customerType" value="Dealer" data-field-radio="CustomerTypeName">
+                                                <span>Dealer</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group full-width">
+                                        <label>Address</label>
+                                        <textarea name="address" rows="3" data-field-input="HouseAddress"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Reset Password</label>
+                                        <input type="password" name="newPassword" placeholder="Enter new password">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Confirm Password</label>
+                                        <input type="password" name="confirmPassword" placeholder="Confirm new password">
+                                    </div>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="button" class="btn-secondary" data-action="close">Cancel</button>
+                                    <button type="submit" class="btn-primary" data-action="save">Save Changes</button>
+                                </div>
+                            </form>
+                        </section>
+                    </div>
+                </template>
+
+                <!-- Walk-in Customer Template -->
+                <template id="walkinCustomerTemplate">
+                    <div class="customer-walkin-layout">
+                        <header class="customer-walkin-header">
+                            <h2 id="customerModalTitle">Walk-in Customer Details</h2>
+                            <p>Update the details captured during manual order entry for this walk-in customer.</p>
+                            <div class="customer-profile-meta">
+                                <div class="meta-item">
+                                    <span class="meta-label">Customer ID</span>
+                                    <span class="meta-value" data-field-text="CustomerID">-</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="meta-label">Created</span>
+                                    <span class="meta-value" data-field-text="CreatedAtFormatted">-</span>
+                                </div>
+                            </div>
+                        </header>
+                        <form class="customer-walkin-form" data-form-type="walkin">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>First Name</label>
+                                    <input type="text" name="firstName" data-field-input="FirstName">
+                                </div>
+                                <div class="form-group">
+                                    <label>Last Name</label>
+                                    <input type="text" name="lastName" data-field-input="LastName">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Contact Number</label>
+                                    <input type="tel" name="phone" data-field-input="Phone">
+                                </div>
+                                <div class="form-group">
+                                    <label>Customer Type</label>
+                                    <select name="customerType" data-field-select="CustomerTypeName">
+                                        <option value="Regular">Regular</option>
+                                        <option value="Dealer">Dealer</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group full-width">
+                                    <label>Address</label>
+                                    <textarea name="address" rows="3" data-field-input="HouseAddress"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn-secondary" data-action="close">Cancel</button>
+                                <button type="submit" class="btn-primary" data-action="save">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Admin Management View -->
+            <div id="view-admin-mgmt" data-view="admin-mgmt" style="display:none">
+                <div class="admin-mgmt-container">
+                    <!-- Admin Form Section -->
+                    <div class="admin-form-section" id="adminFormSection">
+                        <div class="admin-form-card">
+                            <h3 class="admin-form-title" id="adminFormTitle">Edit My Credentials</h3>
+                            
+                            <form id="adminForm">
+                                <input type="hidden" id="adminId" name="adminId">
+                                
+                                <div class="form-field">
+                                    <label for="adminFirstName">First Name</label>
+                                    <input type="text" id="adminFirstName" name="adminFirstName" placeholder="Enter first name" required>
+                                </div>
+                                
+                                <div class="form-field">
+                                    <label for="adminLastName">Last Name</label>
+                                    <input type="text" id="adminLastName" name="adminLastName" placeholder="Enter last name" required>
+                                </div>
+                                
+                                <div class="form-field">
+                                    <label for="adminUsername">Username</label>
+                                    <input type="text" id="adminUsername" name="adminUsername" placeholder="Enter username" required>
+                                </div>
+                                
+                                <div class="form-field span-2">
+                                    <label for="adminEmail">Email</label>
+                                    <input type="email" id="adminEmail" name="adminEmail" placeholder="Enter email address" required>
+                                </div>
+                                
+                                <div class="form-field">
+                                    <label for="adminPhone">Phone</label>
+                                    <input type="tel" id="adminPhone" name="adminPhone" placeholder="Enter phone number">
+                                </div>
+                                
+                                <div class="form-field span-3">
+                                    <label for="adminPassword">Password</label>
+                                    <div class="input-with-toggle">
+                                        <input type="password" id="adminPassword" name="adminPassword" placeholder="Create a new password">
+                                        <button type="button" class="password-toggle-btn" data-toggle-password="adminPassword" aria-label="Show password">
+                                            <svg class="icon-eye-open" viewBox="0 0 24 24" aria-hidden="true">
+                                                <path d="M12 5C5.373 5 2 12 2 12s3.373 7 10 7 10-7 10-7-3.373-7-10-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"></path>
+                                                <circle cx="12" cy="12" r="2.5"></circle>
+                                            </svg>
+                                            <svg class="icon-eye-off" viewBox="0 0 24 24" aria-hidden="true">
+                                                <path d="M3.53 2.47 2.47 3.53l3.02 3.02C3.182 8.005 2 12 2 12s3.373 7 10 7c2.333 0 4.283-.7 5.894-1.732l3.576 3.576 1.06-1.06L3.53 2.47zM12 17c-4.486 0-7.293-3.644-8.225-5 .422-.62 1.17-1.56 2.206-2.45l2.19 2.19A3.503 3.503 0 0 0 12 15.5c.552 0 1.078-.114 1.56-.317l1.752 1.752A8.114 8.114 0 0 1 12 17zm8.225-5c-.327.48-.782 1.133-1.35 1.79l1.074 1.074C21.203 12.833 22 12 22 12s-1.182-3.995-5.49-6.48l-1.47 1.47C17.748 8.04 19.257 9.81 20.225 12z"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class="password-strength" id="adminPasswordStrength">
+                                        <span class="password-strength-text">Strength: <span id="adminPasswordStrengthLabel">Not set</span></span>
+                                        <div class="password-strength-meter">
+                                            <div class="password-strength-bar" id="adminPasswordStrengthBar"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-field span-3">
+                                    <label for="adminConfirmPassword">Re-enter Password</label>
+                                    <div class="input-with-toggle">
+                                        <input type="password" id="adminConfirmPassword" name="adminConfirmPassword" placeholder="Re-enter password">
+                                        <button type="button" class="password-toggle-btn" data-toggle-password="adminConfirmPassword" aria-label="Show password">
+                                            <svg class="icon-eye-open" viewBox="0 0 24 24" aria-hidden="true">
+                                                <path d="M12 5C5.373 5 2 12 2 12s3.373 7 10 7 10-7 10-7-3.373-7-10-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"></path>
+                                                <circle cx="12" cy="12" r="2.5"></circle>
+                                            </svg>
+                                            <svg class="icon-eye-off" viewBox="0 0 24 24" aria-hidden="true">
+                                                <path d="M3.53 2.47 2.47 3.53l3.02 3.02C3.182 8.005 2 12 2 12s3.373 7 10 7c2.333 0 4.283-.7 5.894-1.732l3.576 3.576 1.06-1.06L3.53 2.47zM12 17c-4.486 0-7.293-3.644-8.225-5 .422-.62 1.17-1.56 2.206-2.45l2.19 2.19A3.503 3.503 0 0 0 12 15.5c.552 0 1.078-.114 1.56-.317l1.752 1.752A8.114 8.114 0 0 1 12 17zm8.225-5c-.327.48-.782 1.133-1.35 1.79l1.074 1.074C21.203 12.833 22 12 22 12s-1.182-3.995-5.49-6.48l-1.47 1.47C17.748 8.04 19.257 9.81 20.225 12z"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class="password-error" id="adminPasswordError" role="alert"></div>
+                                </div>
+                                
+                                <div class="form-actions">
+                                    <button type="submit" class="btn-save-admin" id="btnSaveAdmin">Save Admin</button>
+                                    <button type="button" class="btn-cancel-admin" id="btnCancelAdmin">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Approved Orders Table -->
+            </div>
+
+            <!-- Feedback View -->
+            <div id="view-feedback" data-view="feedback" style="display:none">
+                <!-- Header Bar -->
+                <div class="feedback-page-header">
+                    <h1 class="feedback-page-title">Customer Feedback</h1>
+                    <p class="feedback-page-subtitle">View and manage all customer feedback from completed orders</p>
+                </div>
+
+                <!-- Summary Cards -->
+                <div class="feedback-stats">
+                    <div class="stat-card feedback-stat-card">
+                        <div class="stat-icon stat-icon-blue">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-label">Total Feedback</div>
+                        <div class="stat-value" id="feedbackTotalCount">0</div>
+                    </div>
+                    <div class="stat-card feedback-stat-card">
+                        <div class="stat-icon stat-icon-green">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-label">Average Rating</div>
+                        <div class="stat-value" id="feedbackAverageRating">0.0</div>
+                    </div>
+                    <div class="stat-card feedback-stat-card">
+                        <div class="stat-icon stat-icon-yellow">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-label">Excellent (5)</div>
+                        <div class="stat-value" id="feedbackExcellentCount">0</div>
+                    </div>
+                    <div class="stat-card feedback-stat-card">
+                        <div class="stat-icon stat-icon-red">
+                            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-label">Poor (1-2)</div>
+                        <div class="stat-value" id="feedbackPoorCount">0</div>
+                    </div>
+                </div>
+
+                <!-- Filter Card -->
+                <div class="feedback-filter-card">
+                    <div class="filter-row">
+                        <div class="filter-group">
+                            <label>Rating:</label>
+                            <select id="feedbackFilterRating">
+                                <option value="All">All Ratings</option>
+                                <option value="5">Excellent (5)</option>
+                                <option value="4">Very Good (4)</option>
+                                <option value="3">Good (3)</option>
+                                <option value="2">Fair (2)</option>
+                                <option value="1">Poor (1)</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Date From:</label>
+                            <input type="date" id="feedbackFilterDateFrom" class="date-input">
+                        </div>
+                        <div class="filter-group">
+                            <label>To:</label>
+                            <input type="date" id="feedbackFilterDateTo" class="date-input">
+                        </div>
+                        <div class="filter-actions">
+                            <input type="text" id="feedbackSearch" class="feedback-search-input" placeholder="Search by customer name, order ID, or comments...">
+                            <button class="btn-apply" id="feedbackApplyBtn">Apply</button>
+                            <button class="btn-reset" id="feedbackResetBtn">Reset</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feedback Table -->
+                <div class="feedback-table-container">
+                    <div class="feedback-table-header">
+                        <div>Feedback ID</div>
+                        <div>Order ID</div>
+                        <div>Customer</div>
+                        <div>Rating</div>
+                        <div>Comments</div>
+                        <div>Order Date</div>
+                        <div>Feedback Date</div>
+                    </div>
+                    <div class="feedback-table-body" id="feedbackTableBody">
+                        <div class="feedback-empty-state">
+                            <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                            <p>No feedback yet</p>
+                            <span>Customer feedback will appear here once they submit reviews for completed orders</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Configuration View -->
+            <div id="view-system-config" data-view="system-config" style="display:none">
+                <div class="system-config-container">
+                    <div class="system-config-header">
+                        <h1 class="system-config-title">System Configuration</h1>
+                        <p class="system-config-subtitle">Manage system-wide settings, capacity limits, operating hours, and contact details</p>
+                    </div>
+
+                    <div class="system-config-sections">
+                        <!-- Capacity Limits Section -->
+                        <div class="config-section">
+                            <div class="config-section-header">
+                                <h2 class="config-section-title">Capacity Limits</h2>
+                                <p class="config-section-description">Set daily order capacity limits (applies to both refill and brand new orders)</p>
+                            </div>
+                            <div class="config-section-content">
+                                <form id="capacityLimitsForm" class="config-form">
+                                    <div class="capacity-limit-fields">
+                                        <div class="form-field">
+                                            <label for="dailyOrderLimit">Daily Order Limit</label>
+                                            <input type="number" id="dailyOrderLimit" name="dailyOrderLimit" min="0" value="300" placeholder="Enter daily limit (e.g., 300)">
+                                            <small class="field-hint">Maximum number of orders (refill + brand new) allowed per day</small>
+                                        </div>
+                                        <div class="form-field">
+                                            <label for="availableCapacity">Available Capacity (Today)</label>
+                                            <input type="number" id="availableCapacity" name="availableCapacity" min="0" readonly placeholder="Calculated automatically">
+                                            <small class="field-hint">Remaining capacity for today. Updates when orders are confirmed.</small>
+                                        </div>
+                                    </div>
+                                    <div class="form-actions">
+                                        <button type="submit" class="btn-save-config">Save Capacity Limits</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Maintenance Notice Section -->
+                        <div class="config-section">
+                            <div class="config-section-header">
+                                <h2 class="config-section-title">Maintenance Notice</h2>
+                                <p class="config-section-description">Set maintenance notices that will be visible to customers</p>
+                            </div>
+                            <div class="config-section-content">
+                                <form id="maintenanceNoticeForm" class="config-form">
+                                    <div class="form-field">
+                                        <label for="maintenanceActive">
+                                            <input type="checkbox" id="maintenanceActive" name="maintenanceActive" style="width: auto; margin-right: 8px;">
+                                            Enable Maintenance Notice
+                                        </label>
+                                    </div>
+                                    <div class="form-field">
+                                        <label for="maintenanceTitle">Notice Title</label>
+                                        <input type="text" id="maintenanceTitle" name="maintenanceTitle" placeholder="Enter notice title (e.g., 'Scheduled Maintenance')">
+                                    </div>
+                                    <div class="form-field">
+                                        <label for="maintenanceMessage">Notice Message</label>
+                                        <textarea id="maintenanceMessage" name="maintenanceMessage" rows="4" placeholder="Enter detailed maintenance message for customers..."></textarea>
+                                    </div>
+                                    <div class="maintenance-dates-container">
+                                        <div class="form-field">
+                                            <label for="maintenanceStartDate">Estimated Start Date & Time</label>
+                                            <input type="datetime-local" id="maintenanceStartDate" name="maintenanceStartDate">
+                                        </div>
+                                        <div class="form-field">
+                                            <label for="maintenanceEndDate">Estimated End Date & Time</label>
+                                            <input type="datetime-local" id="maintenanceEndDate" name="maintenanceEndDate">
+                                        </div>
+                                    </div>
+                                    <div class="form-actions">
+                                        <button type="submit" class="btn-save-config">Save Maintenance Notice</button>
+                                        <button type="button" class="btn-clear-maintenance" id="clearMaintenanceBtn">Clear Notice</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Stock Edit Modal (for Slim/Round containers) -->
+    <div id="stockEditModal" class="stock-modal-overlay" style="display: none;">
+        <div class="stock-modal">
+            <div class="stock-modal-header">
+                <h2 class="stock-modal-title" id="stockEditModalTitle">Edit Stock</h2>
+                <button class="stock-modal-close" id="stockEditModalClose" aria-label="Close modal">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="stock-modal-content">
+                <!-- Current Stock Display -->
+                <div class="stock-current-display">
+                    <div class="stock-current-item">
+                        <span class="stock-current-label">Current Stock:</span>
+                        <span class="stock-current-value" id="stockEditCurrentValue">0</span>
+                    </div>
+                </div>
+                
+                <!-- Add Stock Form -->
+                <div class="stock-form-section">
+                    <h3 class="stock-form-title">Add Stock</h3>
+                    <form id="stockEditForm" class="stock-form">
+                        <input type="hidden" id="stockEditContainerTypeID" name="containerTypeID">
+                        
+                        <div class="form-field">
+                            <label for="stockEditQuantity">Quantity to Add:</label>
+                            <input 
+                                type="number" 
+                                id="stockEditQuantity" 
+                                name="quantity" 
+                                min="1" 
+                                required 
+                                placeholder="Enter quantity"
+                                class="stock-input"
+                            >
+                        </div>
+                        
+                        <div class="stock-form-actions">
+                            <button type="submit" class="btn-stock-add">Add Stock</button>
+                            <button type="button" class="btn-stock-cancel" id="stockEditFormCancel">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="modal-overlay" id="adminLogoutConfirmModal" aria-hidden="true">
+        <div class="modal-content logout-confirmation-modal" role="dialog" aria-modal="true" aria-labelledby="adminLogoutConfirmTitle" aria-describedby="adminLogoutConfirmMessage">
+            <div class="logout-confirmation-content">
+                <div class="logout-confirmation-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="currentColor" role="img" focusable="false">
+                        <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.59L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+                    </svg>
+                </div>
+                <h3 class="logout-confirmation-title" id="adminLogoutConfirmTitle">Are you sure?</h3>
+                <p class="logout-confirmation-message" id="adminLogoutConfirmMessage">You are about to log out of the admin portal. Do you want to continue?</p>
+                <div class="logout-confirmation-buttons">
+                    <button type="button" class="btn-cancel-logout" id="adminLogoutCancelBtn">Cancel</button>
+                    <button type="button" class="btn-confirm-logout" id="adminLogoutConfirmBtn">Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../assets/js/localMockSeed.js"></script>
+    <script src="assets/js/mockApi.js"></script>
+    <script src="assets/js/admin-auth.js"></script>
+    <script src="assets/js/admin-dashboard.js"></script>
+    <script src="assets/js/admin-navigation.js"></script>
+    <script src="assets/js/admin-manual-entry.js"></script>
+    <script src="assets/js/admin-orders.js"></script>
+    <script src="assets/js/admin-logbook.js"></script>
+    <script src="assets/js/admin-admin-mgmt.js"></script>
+    <script src="assets/js/admin-sidebar.js"></script>
+    <script src="assets/js/admin-stock.js"></script>
+    <script src="assets/js/admin-loans.js"></script>
+    <script src="assets/js/admin-system-config.js"></script>
+    <script src="assets/js/admin-feedback.js"></script>
+    <script src="assets/js/admin-logbook-extended.js"></script>
+</body>
+<!--
+  This admin UI intentionally reuses the color system and rounded, airy
+  layout language from the customer portal to keep a consistent brand.
+-->
+</html>
+
+

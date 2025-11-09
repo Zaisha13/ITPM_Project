@@ -1,0 +1,63 @@
+﻿/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+@media (max-width: 1024px) {
+    .dashboard-top-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .calendar-and-list { 
+        grid-template-columns: 1fr; 
+    }
+    
+    .metric-cards { 
+        grid-template-columns: repeat(2, 1fr); 
+    }
+    
+    .filters { 
+        grid-template-columns: 1fr 1fr; 
+    }
+    
+    .content {
+        padding: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 240px;
+    }
+    
+    .sidebar.collapsed {
+        width: 80px;
+    }
+    
+    .content {
+        margin-left: 240px;
+        padding: 20px;
+        transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .sidebar.collapsed ~ .content {
+        margin-left: 80px;
+    }
+    
+    .cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .metric-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .filters {
+        grid-template-columns: 1fr;
+    }
+    
+    .table-header,
+    .table-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+}
+
