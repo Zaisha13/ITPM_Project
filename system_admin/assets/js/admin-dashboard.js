@@ -75,6 +75,233 @@
     return Number.isFinite(parsed) ? parsed : 0;
   }
 
+  const PRICE_CONFIG_STORAGE_KEY = 'priceConfig';
+  const DEFAULT_PRICE_LOOKUP = {
+    '1-1': 25,
+    '2-1': 25,
+    '1-2': 225,
+    '2-2': 225,
+    '3-1': 10,
+    '3-2': 10
+  };
+
+  const CONTAINER_TYPE_NAME_MAP = {
+    1: 'Slim',
+    2: 'Round',
+    3: 'Wilkins'
+  };
+
+  const ORDER_CATEGORY_NAME_MAP = {
+    1: 'Refill',
+    2: 'New Gallon'
+  };
+
+  let priceLookupCache = null;
+
+  function resetPriceLookupCache() {
+    priceLookupCache = null;
+  }
+
+  function getPriceConfigLookup() {
+    if (priceLookupCache) {
+      return priceLookupCache;
+    }
+
+    const lookup = { ...DEFAULT_PRICE_LOOKUP };
+    try {
+      const raw = localStorage.getItem(PRICE_CONFIG_STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) {
+          parsed.forEach(row => {
+            const containerId = Number(row.ContainerTypeID ?? row.containerTypeID ?? row.containerTypeId ?? row.id);
+            if (!Number.isFinite(containerId) || containerId <= 0) {
+              return;
+            }
+            const refillPrice = Number(row.RefillPrice ?? row.refillPrice ?? row.refill);
+            const brandNewPrice = Number(row.NewContainerPrice ?? row.newContainerPrice ?? row.brandNew);
+            if (Number.isFinite(refillPrice) && refillPrice > 0) {
+              lookup[`${containerId}-1`] = refillPrice;
+            }
+            if (Number.isFinite(brandNewPrice) && brandNewPrice > 0) {
+              lookup[`${containerId}-2`] = brandNewPrice;
+            }
+          });
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to load price configuration for dashboard, using defaults.', error);
+    }
+
+    priceLookupCache = lookup;
+    return lookup;
+  }
+
+  function resolveContainerTypeId(detail) {
+    const numericCandidates = [
+      detail?.ContainerTypeID,
+      detail?.containerTypeID,
+      detail?.ContainerTypeId,
+      detail?.containerTypeId,
+      detail?.container_id,
+      detail?.containerId
+    ];
+    for (const candidate of numericCandidates) {
+      const parsed = Number(candidate);
+      if (Number.isFinite(parsed) && parsed > 0) {
+        return parsed;
+      }
+    }
+
+    const stringCandidates = [
+      detail?.ContainerTypeName,
+      detail?.containerTypeName,
+      detail?.ContainerType,
+      detail?.containerType,
+      detail?.container,
+      detail?.Container
+    ];
+    for (const candidate of stringCandidates) {
+      if (!candidate) continue;
+      const value = candidate.toString().toLowerCase();
+      if (value.includes('slim') || value === '1') return 1;
+      if (value.includes('round') || value === '2') return 2;
+      if (value.includes('wilkins') || value.includes('small') || value === '3') return 3;
+    }
+
+    return 2;
+  }
+
+  function resolveOrderCategoryId(detail) {
+    const numericCandidates = [
+      detail?.OrderCategoryID,
+      detail?.orderCategoryID,
+      detail?.OrderCategoryId,
+      detail?.orderCategoryId,
+      detail?.categoryId
+    ];
+    for (const candidate of numericCandidates) {
+      const parsed = Number(candidate);
+      if (parsed === 1 || parsed === 2) {
+        return parsed;
+      }
+    }
+
+    const stringCandidates = [
+      detail?.OrderCategoryName,
+      detail?.orderCategoryName,
+      detail?.OrderCategory,
+      detail?.orderCategory,
+      detail?.category,
+      detail?.Category,
+      detail?.orderType,
+      detail?.OrderType,
+      detail?.type
+    ];
+    for (const candidate of stringCandidates) {
+      if (!candidate) continue;
+      const value = candidate.toString().toLowerCase();
+      if (value.includes('brand') || value.includes('new')) {
+        return 2;
+      }
+      if (value.includes('refill')) {
+        return 1;
+      }
+    }
+
+    return 1;
+  }
+
+  function resolveUnitPrice(containerId, categoryId, lookup) {
+    const key = `${containerId}-${categoryId}`;
+    const stored = lookup[key];
+    if (Number.isFinite(stored) && stored > 0) {
+      return stored;
+    }
+    if (categoryId === 2) {
+      return containerId === 3 ? 10 : 225;
+    }
+    return containerId === 3 ? 10 : 25;
+  }
+
+  function normaliseDetailRecord(detail, index, lookup) {
+    const quantity = Math.max(0, toNumber(detail?.Quantity ?? detail?.quantity ?? detail?.qty));
+    const containerId = resolveContainerTypeId(detail);
+    const categoryId = resolveOrderCategoryId(detail);
+
+    const containerNameRaw =
+      detail?.ContainerTypeName ??
+      detail?.containerTypeName ??
+      detail?.ContainerType ??
+      detail?.containerType ??
+      detail?.container ??
+      detail?.Container ??
+      CONTAINER_TYPE_NAME_MAP[containerId] ??
+      '';
+    let containerName = containerNameRaw ? containerNameRaw.toString() : '';
+    if (/slim/i.test(containerName)) containerName = 'Slim';
+    else if (/round/i.test(containerName)) containerName = 'Round';
+    else if (/wilk|small/i.test(containerName)) containerName = 'Wilkins';
+    else if (!containerName) containerName = CONTAINER_TYPE_NAME_MAP[containerId] || '-';
+
+    const categoryNameRaw =
+      detail?.OrderCategoryName ??
+      detail?.orderCategoryName ??
+      detail?.OrderCategory ??
+      detail?.orderCategory ??
+      detail?.category ??
+      detail?.Category ??
+      detail?.orderType ??
+      detail?.OrderType ??
+      ORDER_CATEGORY_NAME_MAP[categoryId] ??
+      '';
+    let categoryName = categoryNameRaw ? categoryNameRaw.toString() : '';
+    if (/brand/i.test(categoryName) || /new/i.test(categoryName)) {
+      categoryName = 'New Gallon';
+    } else if (/refill/i.test(categoryName)) {
+      categoryName = 'Refill';
+    } else if (!categoryName) {
+      categoryName = ORDER_CATEGORY_NAME_MAP[categoryId] || '-';
+    }
+
+    const explicitUnitPrice = toNumber(detail?.UnitPrice ?? detail?.unitPrice ?? detail?.unit_price ?? detail?.price);
+    const unitPrice = explicitUnitPrice > 0 ? explicitUnitPrice : resolveUnitPrice(containerId, categoryId, lookup);
+
+    const explicitSubtotal = toNumber(detail?.Subtotal ?? detail?.subtotal ?? detail?.Total ?? detail?.total ?? detail?.amount);
+    const subtotal = explicitSubtotal > 0 ? explicitSubtotal : unitPrice * quantity;
+
+    return {
+      OrderDetailID: detail?.OrderDetailID ?? detail?.orderDetailID ?? detail?.orderDetailId ?? index + 1,
+      ContainerTypeID: containerId,
+      OrderCategoryID: categoryId,
+      ContainerTypeName: containerName,
+      OrderCategoryName: categoryName,
+      Quantity: quantity,
+      UnitPrice: unitPrice,
+      Subtotal: subtotal,
+      container: containerName,
+      category: categoryName,
+      qty: quantity,
+      unitPrice,
+      subtotal
+    };
+  }
+
+  function buildOrderDetails(details) {
+    if (!Array.isArray(details) || details.length === 0) {
+      return [];
+    }
+    const lookup = getPriceConfigLookup();
+    return details.map((detail, index) => normaliseDetailRecord(detail, index, lookup));
+  }
+
+  function computeDetailsTotal(details) {
+    if (!Array.isArray(details) || details.length === 0) {
+      return 0;
+    }
+    return details.reduce((sum, detail) => sum + toNumber(detail.Subtotal ?? detail.subtotal), 0);
+  }
+
   function derivePaymentStatus(orderStatus, fallbackStatus = '') {
     const status = (orderStatus || fallbackStatus || '').toLowerCase();
     if (status.includes('cancel')) return 'Cancelled';
@@ -93,6 +320,7 @@
   }
 
   function fetchOrders() {
+    resetPriceLookupCache();
     // Fetch all orders including pending ones for dashboard
     // This combines orders from both endpoints: pending orders (for dashboard) and approved orders (for orders table)
     return Promise.all([
@@ -125,12 +353,17 @@
       allOrders = combinedOrders.map(o => {
         const orderStatus = o.OrderStatusName || '';
         const paymentStatus = derivePaymentStatus(orderStatus, o.PaymentStatusName || '');
+        const rawDetails = Array.isArray(o.OrderDetails) ? o.OrderDetails : [];
+        const normalizedDetails = buildOrderDetails(rawDetails);
+        const computedTotal = computeDetailsTotal(normalizedDetails);
+        const fallbackTotal = toNumber(o.TotalAmount);
+        const totalAmount = computedTotal > 0 ? computedTotal : fallbackTotal;
         return {
           id: o.OrderID,
           customer: o.CustomerName,
           username: o.CustomerUsername || '',
           address: o.DeliveryAddress || '',
-          total: toNumber(o.TotalAmount),
+          total: totalAmount,
           updatedAt: o.UpdatedAt,
           createdAt: o.CreatedAt,
           orderDate: o.OrderDate || (o.CreatedAt ? getDateOnlyFromString(o.CreatedAt) : ''),
@@ -139,13 +372,7 @@
           paymentStatus,
           mop: o.MOPName || '',
           receivingMethod: o.ReceivingMethodName || '',
-          details: Array.isArray(o.OrderDetails) ? o.OrderDetails.map(d => ({
-            qty: toNumber(d.Quantity),
-            container: d.ContainerTypeName || '',
-            category: d.OrderCategoryName || '',
-            unitPrice: toNumber(d.UnitPrice),
-            subtotal: toNumber(d.Subtotal)
-          })) : []
+          details: normalizedDetails
         };
       });
     }).catch(() => {
@@ -185,38 +412,38 @@
               // Determine payment status based on order status
               const paymentStatus = derivePaymentStatus(orderStatus, o.paymentStatus);
               
+              const rawItems = Array.isArray(o.items) && o.items.length
+                ? o.items
+                : (Array.isArray(o.OrderDetails) && o.OrderDetails.length
+                  ? o.OrderDetails
+                  : (Array.isArray(o.details) ? o.details : []));
+              
               // Map order type
-              const hasRefill = o.items?.some(item => item.orderType === 'refill');
-              const hasBrandNew = o.items?.some(item => item.orderType === 'brandNew');
-              const orderType = (hasRefill && hasBrandNew) ? 'Mixed Order' : (hasRefill ? 'Refill' : 'Brand-new');
+              const hasRefill = rawItems.some(item => {
+                const value = (item.orderType ?? item.OrderType ?? item.OrderCategoryName ?? item.category ?? '').toString().toLowerCase();
+                return value.includes('refill');
+              });
+              const hasBrandNew = rawItems.some(item => {
+                const value = (item.orderType ?? item.OrderType ?? item.OrderCategoryName ?? item.category ?? '').toString().toLowerCase();
+                return value.includes('brand') || value.includes('new');
+              });
+              const orderType = (hasRefill && hasBrandNew) ? 'Mixed Order' : (hasBrandNew ? 'Brand-new' : 'Refill');
               
               // Map receiving method
               const receivingMethod = o.deliveryMethod === 'delivery' ? 'Delivery' : 'Pickup';
               
               // Build details array
-              const details = (o.items || []).map(item => {
-                const containerMap = {
-                  'slim': 'Slim',
-                  'round': 'Round',
-                  'wilkins': 'Wilkins'
-                };
-                const categoryMap = {
-                  'refill': 'Refill',
-                  'brandNew': 'New Gallon'
-                };
-                return {
-                  qty: Number(item.quantity || 0),
-                  container: containerMap[item.containerType] || 'Slim',
-                  category: categoryMap[item.orderType] || 'Refill'
-                };
-              });
+              const details = buildOrderDetails(rawItems);
+              const computedTotal = computeDetailsTotal(details);
+              const fallbackTotal = toNumber(o.total || o.grandTotal);
+              const totalAmount = computedTotal > 0 ? computedTotal : fallbackTotal;
               
               return {
                 id: o.id || o.orderId || (index + 1),
                 customer: o.customerName || `${o.firstName || ''} ${o.lastName || ''}`.trim() || 'Customer',
                 username: o.username || o.accountUsername || '',
                 address: o.address || o.deliveryAddress || '',
-              total: toNumber(o.total || o.grandTotal),
+                total: totalAmount,
                 updatedAt: o.updatedAt || o.date || new Date().toISOString(),
                 createdAt: o.createdAt || o.date || new Date().toISOString(),
                 orderDate: o.orderDate || (o.createdAt || o.date ? getDateOnlyFromString(o.createdAt || o.date) : ''),

@@ -1,5 +1,7 @@
 ﻿// Stock Management functionality (server-backed)
 (function() {
+  const API_STOCK = '../admin_backend/api/get_container_stock.php';
+  const API_APPROVED_ORDERS = '../admin_backend/api/read_orders.php';
   const STORAGE_KEY_STOCKS = 'container_stocks';
   const STORAGE_KEY_LOGS = 'container_stock_logs';
   
@@ -60,26 +62,153 @@
     localStorage.setItem(STORAGE_KEY_LOGS, JSON.stringify(logs));
   }
   
-  // Calculate Available Gallons (Slim + Round)
-  function calculateAvailableGallons() {
-    const slim = getStock(1);
-    const round = getStock(2);
+  // Normalize numeric input
+  function toSafeNumber(value) {
+    const num = Number(value);
+    return Number.isFinite(num) ? num : 0;
+  }
+
+  function isBrandNewCategory(name) {
+    const value = (name || '').toLowerCase();
+    return value === 'new gallon' || value === 'brand new';
+  }
+
+  function containerKeyFromName(name) {
+    const value = (name || '').toLowerCase();
+    if (value.includes('slim')) return 'slim';
+    if (value.includes('round')) return 'round';
+    return null;
+  }
+
+  function isApprovedOrderStatus(statusName, statusId) {
+    const normalized = (statusName || '').toLowerCase();
+    if (typeof statusId === 'number' && statusId === 8) return false; // Cancelled
+    if (normalized.includes('cancel')) return false;
+    if (normalized.includes('for approval')) return false;
+    return true;
+  }
+
+  function calculateAvailableGallons(slimValue, roundValue) {
+    const slim = typeof slimValue === 'number' ? slimValue : getStock(1);
+    const round = typeof roundValue === 'number' ? roundValue : getStock(2);
     return slim + round;
+  }
+
+  function deriveBrandNewCounts(orders) {
+    const counts = { slim: 0, round: 0 };
+    if (!Array.isArray(orders)) {
+      return counts;
+    }
+
+    orders.forEach(order => {
+      const statusName = order.OrderStatusName || order.orderStatus;
+      const statusId = typeof order.OrderStatusID !== 'undefined'
+        ? Number(order.OrderStatusID)
+        : (typeof order.orderStatusId !== 'undefined' ? Number(order.orderStatusId) : undefined);
+
+      if (!isApprovedOrderStatus(statusName, statusId)) {
+        return;
+      }
+
+      const details = Array.isArray(order.OrderDetails) ? order.OrderDetails : order.details;
+      if (!Array.isArray(details)) {
+        return;
+      }
+
+      details.forEach(detail => {
+        const categoryName = detail.OrderCategoryName || detail.category;
+        if (!isBrandNewCategory(categoryName)) {
+          return;
+        }
+
+        const qtyRaw = detail.Quantity ?? detail.quantity ?? detail.qty;
+        const qty = toSafeNumber(qtyRaw);
+        if (!qty) {
+          return;
+        }
+
+        const containerName = detail.ContainerTypeName || detail.container;
+        const key = containerKeyFromName(containerName);
+        if (key && typeof counts[key] === 'number') {
+          counts[key] += qty;
+        }
+      });
+    });
+
+    return counts;
   }
   
   // Load stock values for dashboard
-  function loadStockValues() {
-    const slim = getStock(1);
-    const round = getStock(2);
-    const available = calculateAvailableGallons();
+  async function loadStockValues() {
+    let slim = toSafeNumber(getStock(1));
+    let round = toSafeNumber(getStock(2));
+
+    // Try to sync with server-side stock counts
+    try {
+      const response = await fetch(API_STOCK, { credentials: 'include' });
+      if (response.ok) {
+        const payload = await response.json();
+        if (payload && payload.success) {
+          if (Array.isArray(payload.data)) {
+            payload.data.forEach(entry => {
+              const id = Number(entry.ContainerTypeID ?? entry.containerTypeID);
+              const stockValue = toSafeNumber(entry.Stock ?? entry.stock);
+              if (id === 1) {
+                slim = stockValue;
+                setStock(1, slim);
+              } else if (id === 2) {
+                round = stockValue;
+                setStock(2, round);
+              }
+            });
+          } else if (payload.data && payload.data.stock) {
+            const entry = payload.data.stock;
+            const id = Number(entry.ContainerTypeID ?? entry.containerTypeID);
+            const stockValue = toSafeNumber(entry.Stock ?? entry.stock);
+            if (id === 1) {
+              slim = stockValue;
+              setStock(1, slim);
+            } else if (id === 2) {
+              round = stockValue;
+              setStock(2, round);
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.warn('Unable to sync container stock from server:', error);
+    }
+
+    // Fetch approved orders and subtract brand-new quantities
+    let adjustedSlim = slim;
+    let adjustedRound = round;
+    try {
+      const response = await fetch(API_APPROVED_ORDERS, { credentials: 'include' });
+      if (response.ok) {
+        const payload = await response.json();
+        if (payload && payload.success) {
+          const counts = deriveBrandNewCounts(payload.data);
+          adjustedSlim = Math.max(0, slim - toSafeNumber(counts.slim));
+          adjustedRound = Math.max(0, round - toSafeNumber(counts.round));
+        }
+      }
+    } catch (error) {
+      console.warn('Unable to adjust stock counts based on approved orders:', error);
+      adjustedSlim = slim;
+      adjustedRound = round;
+    }
+
+    const available = calculateAvailableGallons(adjustedSlim, adjustedRound);
     
     const slimEl = document.getElementById('slimContainers');
     const roundEl = document.getElementById('roundContainers');
     const availableEl = document.getElementById('availableGallons');
     
-    if (slimEl) slimEl.textContent = slim;
-    if (roundEl) roundEl.textContent = round;
+    if (slimEl) slimEl.textContent = adjustedSlim;
+    if (roundEl) roundEl.textContent = adjustedRound;
     if (availableEl) availableEl.textContent = available;
+
+    return { slim: adjustedSlim, round: adjustedRound, available };
   }
   
   // Render stock logs with filter
@@ -213,7 +342,7 @@
   }
   
   // Handle stock edit form submission
-  function handleStockEditFormSubmit(e) {
+  async function handleStockEditFormSubmit(e) {
     e.preventDefault();
     
     const form = e.target;
@@ -249,7 +378,7 @@
       });
       
       // Reload dashboard values
-      loadStockValues();
+      await loadStockValues();
       
       // Update current value in modal
       const currentValueEl = document.getElementById('stockEditCurrentValue');
@@ -278,7 +407,7 @@
     initStocks();
     
     // Load initial values
-    loadStockValues();
+    loadStockValues().catch(err => console.error('Failed to load stock values on init:', err));
     
     // Make cards clickable
     const clickableCards = document.querySelectorAll('.clickable-card');

@@ -3,6 +3,9 @@
    ============================================ */
 (function() {
   const STORAGE_KEY = 'system_config';
+  const API_BASE = new URL('../admin_backend/api/', window.location.href)
+    .toString()
+    .replace(/\/$/, '');
   
   // Get default config
   function getDefaultConfig() {
@@ -22,11 +25,22 @@
 
   function getStoredConfig() {
     const stored = localStorage.getItem(STORAGE_KEY);
-    const config = stored ? JSON.parse(stored) : getDefaultConfig();
-    if (!Array.isArray(config.maintenance_notices)) {
-      config.maintenance_notices = [];
+    if (!stored) {
+      return getDefaultConfig();
     }
-    return config;
+
+    try {
+      const config = JSON.parse(stored);
+      if (!Array.isArray(config.maintenance_notices)) {
+        config.maintenance_notices = [];
+      }
+      return config;
+    } catch (error) {
+      console.error('Failed to parse stored system config; resetting to defaults.', error);
+      const defaults = getDefaultConfig();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(defaults));
+      return defaults;
+    }
   }
 
   function deriveLegacyMaintenanceFields(config) {
@@ -160,24 +174,123 @@
     return `notice_${Date.now()}_${Math.random().toString(16).slice(2)}`;
   }
 
-  function handleDeleteNotice(id) {
+  function normalizeNotice(notice) {
+    if (!notice || typeof notice !== 'object') {
+      return null;
+    }
+
+    const normalized = {
+      id: typeof notice.id === 'string' && notice.id ? notice.id : generateNoticeId(),
+      title: typeof notice.title === 'string' ? notice.title : '',
+      message: typeof notice.message === 'string' ? notice.message : '',
+      startDate: typeof notice.startDate === 'string' ? notice.startDate : '',
+      endDate: typeof notice.endDate === 'string' ? notice.endDate : '',
+      createdAt: typeof notice.createdAt === 'string' && notice.createdAt
+        ? notice.createdAt
+        : new Date().toISOString()
+    };
+
+    return normalized;
+  }
+
+  async function persistMaintenanceNotices(notices) {
+    const payload = Array.isArray(notices)
+      ? notices.map((notice) => normalizeNotice(notice)).filter(Boolean)
+      : [];
+
+    try {
+      const response = await fetch(`${API_BASE}/update_system_config.php`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          type: 'maintenance',
+          maintenanceNotices: payload
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Server responded with ${response.status}`);
+      }
+
+      const data = await response.json();
+      if (!data.success) {
+        throw new Error(data.message || 'Failed to update maintenance notices');
+      }
+
+      return { success: true };
+    } catch (error) {
+      console.error('Failed to persist maintenance notices:', error);
+      return { success: false, message: error.message };
+    }
+  }
+
+  async function fetchMaintenanceNoticesFromServer() {
+    try {
+      const response = await fetch(`${API_BASE}/get_system_config.php?type=maintenance`, {
+        credentials: 'include'
+      });
+
+      if (!response.ok) {
+        throw new Error(`Server responded with ${response.status}`);
+      }
+
+      const data = await response.json();
+      if (data.success && data.config) {
+        if (Array.isArray(data.config.notices)) {
+          return data.config.notices.map((notice) => normalizeNotice(notice)).filter(Boolean);
+        }
+
+        if (data.config.title || data.config.message) {
+          return [normalizeNotice({
+            id: data.config.id,
+            title: data.config.title,
+            message: data.config.message,
+            startDate: data.config.startDate,
+            endDate: data.config.endDate,
+            createdAt: data.config.createdAt
+          })].filter(Boolean);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch maintenance notices from server:', error);
+    }
+
+    return null;
+  }
+
+  async function syncMaintenanceFromServer() {
+    const notices = await fetchMaintenanceNoticesFromServer();
+    if (!notices) {
+      return;
+    }
+
+    saveSystemConfig({ maintenance_notices: notices });
+    renderMaintenanceNoticesList(notices);
+  }
+
+  async function handleDeleteNotice(id) {
     if (!id) return;
     if (!confirm('Delete this maintenance notice?')) return;
 
     const config = getStoredConfig();
     const filtered = config.maintenance_notices.filter((notice) => notice.id !== id);
-    const result = saveSystemConfig({ maintenance_notices: filtered });
+    saveSystemConfig({ maintenance_notices: filtered });
+    renderMaintenanceNoticesList(filtered);
+
+    const result = await persistMaintenanceNotices(filtered);
 
     if (result.success) {
       alert('Maintenance notice deleted.');
-      loadSystemConfig();
     } else {
-      alert('Error: ' + result.message);
+      alert('Deleted locally but failed to sync with server: ' + result.message);
     }
+
+    await loadSystemConfig();
   }
   
   // Load system configuration from localStorage
-  function loadSystemConfig() {
+  async function loadSystemConfig() {
     try {
       const config = getStoredConfig();
       
@@ -198,12 +311,14 @@
       if (maintenanceEndDate) maintenanceEndDate.value = '';
 
       renderMaintenanceNoticesList(config.maintenance_notices);
+
+      await syncMaintenanceFromServer();
     } catch (e) {
       console.error('Failed to load system config', e);
       // Load defaults if error
       const config = getDefaultConfig();
       localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
-      loadSystemConfig();
+      await loadSystemConfig();
     }
   }
   
@@ -213,7 +328,10 @@
       const config = getStoredConfig();
       Object.keys(updates || {}).forEach((key) => {
         if (key === 'maintenance_notices') {
-          config.maintenance_notices = Array.isArray(updates[key]) ? updates[key] : [];
+          const noticesArray = Array.isArray(updates[key]) ? updates[key] : [];
+          config.maintenance_notices = noticesArray
+            .map((notice) => normalizeNotice(notice))
+            .filter(Boolean);
         } else {
           config[key] = updates[key];
         }
@@ -221,14 +339,14 @@
 
       persistConfig(config);
       
-      return { success: true, message: 'Saved successfully' };
+      return { success: true, message: 'Saved successfully', config };
     } catch (e) {
       return { success: false, message: e.message };
     }
   }
   
   // Save capacity limits
-  document.getElementById('capacityLimitsForm')?.addEventListener('submit', function(e) {
+  document.getElementById('capacityLimitsForm')?.addEventListener('submit', async function(e) {
     e.preventDefault();
     const dailyOrderLimit = parseInt(document.getElementById('dailyOrderLimit').value) || 300;
     const availableCapacity = parseInt(document.getElementById('availableCapacity').value) || dailyOrderLimit;
@@ -240,14 +358,14 @@
     
     if (result.success) {
       alert('Capacity limits saved successfully!');
-      loadSystemConfig();
+      await loadSystemConfig();
     } else {
       alert('Error: ' + result.message);
     }
   });
   
   // Save maintenance notice
-  document.getElementById('maintenanceNoticeForm')?.addEventListener('submit', function(e) {
+  document.getElementById('maintenanceNoticeForm')?.addEventListener('submit', async function(e) {
     e.preventDefault();
     const titleInput = document.getElementById('maintenanceTitle');
     const messageInput = document.getElementById('maintenanceMessage');
@@ -276,32 +394,36 @@
       createdAt: new Date().toISOString()
     });
 
-    const result = saveSystemConfig({
-      maintenance_notices: notices
-    });
-    
+    saveSystemConfig({ maintenance_notices: notices });
+    renderMaintenanceNoticesList(notices);
+
+    const result = await persistMaintenanceNotices(notices);
+
     if (result.success) {
       alert('Maintenance notice added successfully!');
-      loadSystemConfig();
     } else {
-      alert('Error: ' + result.message);
+      alert('Notice added locally but failed to sync with server: ' + result.message);
     }
+
+    await loadSystemConfig();
   });
   
   // Clear maintenance notice
-  document.getElementById('clearMaintenanceBtn')?.addEventListener('click', () => {
+  document.getElementById('clearMaintenanceBtn')?.addEventListener('click', async () => {
     if (!confirm('Clear all maintenance notices?')) return;
     
-    const result = saveSystemConfig({
-      maintenance_notices: []
-    });
-    
+    saveSystemConfig({ maintenance_notices: [] });
+    renderMaintenanceNoticesList([]);
+
+    const result = await persistMaintenanceNotices([]);
+
     if (result.success) {
       alert('All maintenance notices cleared!');
-      loadSystemConfig();
     } else {
-      alert('Error: ' + result.message);
+      alert('Cleared locally but failed to sync with server: ' + result.message);
     }
+
+    await loadSystemConfig();
   });
   
   // Checkbox styling for operating days

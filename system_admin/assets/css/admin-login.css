@@ -80,7 +80,7 @@
 }
 
 .admin-login-container .modal-icon {
-  color: #0b78d0;
+  color: var(--primary-blue);
 }
 
 .admin-login-container .modal-header h2 {
@@ -192,7 +192,7 @@
 .admin-login-container .btn-submit {
   border: none;
   border-radius: 12px;
-  background: #0b78d0;
+  background: var(--primary-blue);
   color: #fff;
   font-weight: 600;
   font-size: 1rem;
