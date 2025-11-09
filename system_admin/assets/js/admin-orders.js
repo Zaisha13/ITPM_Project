@@ -28,9 +28,16 @@
     ordersTableBody = document.getElementById('approvedOrdersTableBody');
   }
   function derivePaymentStatus(orderStatus, fallbackStatus = '') {
-    const status = (orderStatus || fallbackStatus || '').toLowerCase();
-    if (status.includes('cancel')) return 'Cancelled';
-    if (status.includes('complete') || status.includes('deliver')) return 'Paid';
+    const normalizedStatus = (orderStatus || '').toLowerCase();
+    if (normalizedStatus.includes('cancel')) return 'Cancelled';
+    if (normalizedStatus.includes('complete')) return 'Paid';
+
+    const normalizedFallback = (fallbackStatus || '').toLowerCase();
+    if (!normalizedStatus) {
+      if (normalizedFallback.includes('cancel')) return 'Cancelled';
+      if (normalizedFallback.includes('complete')) return 'Paid';
+    }
+
     return 'Pending';
   }
 

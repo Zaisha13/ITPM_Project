@@ -492,7 +492,7 @@
       if (status.includes('cancel')) {
         clone.paymentStatus = 'cancelled';
         clone.paymentStatusId = 4;
-      } else if (status.includes('complete') || status.includes('deliver')) {
+      } else if (status.includes('complete')) {
         clone.paymentStatus = 'paid';
         clone.paymentStatusId = 2;
       } else {
@@ -527,7 +527,7 @@
             const status = normaliseName(clone.OrderStatus);
             if (status.includes('cancel')) {
               clone.PaymentStatus = 'Cancelled';
-            } else if (status.includes('complete') || status.includes('deliver')) {
+            } else if (status.includes('complete')) {
               clone.PaymentStatus = 'Paid';
             } else {
               clone.PaymentStatus = 'Pending';
@@ -555,7 +555,7 @@
           const status = normaliseName(clone.OrderStatus);
           if (status.includes('cancel')) {
             clone.PaymentStatus = 'Cancelled';
-          } else if (status.includes('complete') || status.includes('deliver')) {
+          } else if (status.includes('complete')) {
             clone.PaymentStatus = 'Paid';
           } else {
             clone.PaymentStatus = 'Pending';
