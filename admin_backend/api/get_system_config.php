@@ -62,15 +62,33 @@ try {
             ]
         ]);
     } else if ($type === 'maintenance') {
-        $active = ($config['maintenance_active'] ?? '0') === '1';
-        echo json_encode([
-            'success' => true,
-            'config' => [
-                'active' => $active,
+        $maintenanceNotices = [];
+        if (!empty($config['maintenance_notices'])) {
+            $decoded = json_decode($config['maintenance_notices'], true);
+            if (is_array($decoded)) {
+                $maintenanceNotices = $decoded;
+            }
+        }
+
+        // Backward compatibility: if legacy maintenance fields exist but no notice list yet
+        if (empty($maintenanceNotices) && (
+            !empty($config['maintenance_title']) ||
+            !empty($config['maintenance_message'])
+        )) {
+            $maintenanceNotices[] = [
+                'id' => $config['maintenance_id'] ?? uniqid('legacy_', true),
                 'title' => $config['maintenance_title'] ?? '',
                 'message' => $config['maintenance_message'] ?? '',
                 'startDate' => $config['maintenance_start_date'] ?? '',
-                'endDate' => $config['maintenance_end_date'] ?? ''
+                'endDate' => $config['maintenance_end_date'] ?? '',
+                'createdAt' => $config['maintenance_created_at'] ?? date('c')
+            ];
+        }
+
+        echo json_encode([
+            'success' => true,
+            'config' => [
+                'notices' => $maintenanceNotices
             ]
         ]);
     } else {

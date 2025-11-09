@@ -1,5 +1,50 @@
 ﻿// Customer Logbook functionality
 (function() {
+  const ADMIN_CUSTOMERS_STORAGE_KEY = 'adminCustomers';
+  const MOCK_ACCOUNTS_STORAGE_KEY = 'mock_accounts';
+  const ORDER_SUBMISSIONS_STORAGE_KEY = 'orderSubmissions';
+  const ADMIN_ORDERS_STORAGE_KEY = 'mock_orders';
+
+  function safeParseJSON(raw, fallback = null) {
+    if (!raw) return fallback;
+    try {
+      return JSON.parse(raw);
+    } catch (error) {
+      return fallback;
+    }
+  }
+
+  function readStorageArray(key) {
+    const parsed = safeParseJSON(localStorage.getItem(key), []);
+    return Array.isArray(parsed) ? parsed : [];
+  }
+
+  function writeStorageValue(key, value) {
+    localStorage.setItem(key, JSON.stringify(value));
+  }
+
+  function hashPassword(str) {
+    let hash = 0;
+    if (!str) return hash.toString();
+    for (let i = 0; i < str.length; i += 1) {
+      hash = ((hash << 5) - hash) + str.charCodeAt(i);
+      hash |= 0;
+    }
+    return String(hash);
+  }
+
+  function normaliseString(value) {
+    return (value || '').toString().trim();
+  }
+
+  function toLower(value) {
+    return normaliseString(value).toLowerCase();
+  }
+
+  function buildCustomerFullName(firstName, lastName) {
+    return [normaliseString(firstName), normaliseString(lastName)].filter(Boolean).join(' ').trim();
+  }
+
   let allCustomers = [];
   let filteredCustomers = [];
   let currentTab = 'all'; // 'all', 'online', 'walkin'
@@ -268,11 +313,19 @@
     fragment.querySelectorAll('[data-field-select]').forEach(select => {
       const field = select.getAttribute('data-field-select');
       if (!field) return;
-      const value = customer[field] || '';
-      select.value = value || 'Regular';
+      const rawValue = customer[field] || '';
+      const defaultLabel = 'Regular';
+      const normalisedValue = normaliseCustomerTypeLabel(rawValue, defaultLabel);
+      const options = Array.from(select.options || []);
+      const targetOption = options.find(option => option.value === normalisedValue);
+      if (targetOption) {
+        select.value = normalisedValue;
+      } else if (options.length > 0) {
+        select.value = options[0].value;
+      }
     });
 
-    const customerTypeName = (customer.CustomerTypeName || '').toLowerCase();
+    const customerTypeName = normaliseCustomerTypeLabel(customer.CustomerTypeName, 'Regular').toLowerCase();
     fragment.querySelectorAll('[data-field-radio]').forEach(radio => {
       const radioValue = (radio.value || '').toLowerCase();
       radio.checked = radioValue === customerTypeName || (!radioValue && !customerTypeName);
@@ -288,70 +341,357 @@
     modal.classList.remove('customer-modal-saving');
   }
 
+  function normaliseCustomerTypeLabel(rawValue, fallback = 'Regular') {
+    const value = (rawValue || '').toString().trim().toLowerCase();
+
+    if (!value) {
+      return fallback;
+    }
+
+    if (value === 'dealer') return 'Dealer';
+    if (value === 'walkin' || value === 'walk-in') return 'Regular';
+    if (value === 'regular') return 'Regular';
+
+    if (rawValue === 'Dealer' || rawValue === 'Regular') {
+      return rawValue;
+    }
+
+    if (rawValue === 'Walk-in') {
+      return 'Regular';
+    }
+
+    return fallback;
+  }
+
   function mapCustomerTypeToId(typeName) {
-    const value = (typeName || '').toLowerCase();
+    const value = (typeName || '').toString().trim().toLowerCase();
     if (value === 'dealer') return 2;
     return 1;
   }
 
-  async function saveCustomerDetails(customer, formData, formType) {
-    const payload = {
-      CustomerID: customer.CustomerID,
-      FirstName: formData.get('firstName')?.trim() || '',
-      LastName: formData.get('lastName')?.trim() || '',
-      Phone: formData.get('phone')?.trim() || '',
-      HouseAddress: formData.get('address')?.trim() || ''
+  function buildStorageRecordFromCustomer(customer) {
+    const typeName = normaliseCustomerTypeLabel(
+      customer.CustomerTypeName,
+      'Regular'
+    );
+
+    return {
+      CustomerID: customer.CustomerID ?? null,
+      AccountID: customer.AccountID ?? null,
+      FirstName: customer.FirstName ?? '',
+      LastName: customer.LastName ?? '',
+      Phone: customer.Phone ?? '',
+      HouseAddress: customer.HouseAddress ?? '',
+      CustomerTypeID: customer.CustomerTypeID ?? mapCustomerTypeToId(typeName),
+      CustomerTypeName: typeName,
+      CreatedAt: customer.CreatedAt ?? null,
+      Email: customer.Email ?? '',
+      Username: customer.Username ?? '',
+      isOnline: Boolean(customer.isOnline)
     };
+  }
 
-    const typeValue = formType === 'online'
-      ? (formData.get('customerType') || customer.CustomerTypeName || 'Regular')
-      : (formData.get('customerType') || 'Regular');
+  function syncCustomerToLocalStorage(customer) {
+    if (!customer || customer.CustomerID === undefined || customer.CustomerID === null) {
+      return;
+    }
 
-    payload.CustomerTypeID = mapCustomerTypeToId(typeValue);
+    try {
+      const raw = localStorage.getItem(ADMIN_CUSTOMERS_STORAGE_KEY);
+      let existing = [];
 
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            existing = parsed;
+          }
+        } catch (error) {
+          console.warn('Failed to parse adminCustomers cache, resetting.', error);
+        }
+      }
+
+      const storageRecord = buildStorageRecordFromCustomer(customer);
+      const customerIdString = String(storageRecord.CustomerID);
+
+      let updated = false;
+      const next = existing.map(entry => {
+        if (entry && String(entry.CustomerID) === customerIdString) {
+          updated = true;
+          return { ...entry, ...storageRecord };
+        }
+        return entry;
+      });
+
+      if (!updated) {
+        next.push(storageRecord);
+      }
+
+      localStorage.setItem(ADMIN_CUSTOMERS_STORAGE_KEY, JSON.stringify(next));
+    } catch (error) {
+      console.warn('Unable to sync customer to adminCustomers cache:', error);
+    }
+  }
+
+  function showModalToast(container, message, variant = 'error') {
+    if (!container) {
+      alert(message);
+      return;
+    }
+    const toast = document.createElement('div');
+    toast.className = `customer-modal-toast ${variant}`;
+    toast.textContent = message;
+    container.appendChild(toast);
+    setTimeout(() => {
+      toast.remove();
+    }, 4000);
+  }
+
+  function updateOrdersWithCustomer(customer) {
+    if (!customer || customer.CustomerID == null) {
+      return;
+    }
+    const customerIdString = String(customer.CustomerID);
+    const accountIdString = customer.AccountID != null ? String(customer.AccountID) : null;
+    const fullName = buildCustomerFullName(customer.FirstName, customer.LastName);
+    const updatedAt = new Date().toISOString();
+
+    const orderSubmissions = readStorageArray(ORDER_SUBMISSIONS_STORAGE_KEY);
+    let ordersChanged = false;
+    orderSubmissions.forEach(order => {
+      const orderCustomerId = order?.customerID != null ? String(order.customerID) : (order?.CustomerID != null ? String(order.CustomerID) : null);
+      const orderAccountId = order?.accountId != null ? String(order.accountId) : (order?.AccountID != null ? String(order.AccountID) : null);
+      const matches = (orderCustomerId && orderCustomerId === customerIdString) ||
+        (accountIdString && orderAccountId && orderAccountId === accountIdString);
+      if (!matches) {
+        return;
+      }
+      if (fullName) {
+        order.customerName = fullName;
+      }
+      if (customer.FirstName !== undefined) {
+        order.firstName = customer.FirstName;
+      }
+      if (customer.LastName !== undefined) {
+        order.lastName = customer.LastName;
+      }
+      if (customer.Phone !== undefined) {
+        order.phone = customer.Phone;
+      }
+      if (customer.HouseAddress !== undefined) {
+        order.deliveryAddress = customer.HouseAddress;
+        order.address = customer.HouseAddress;
+      }
+      order.customerType = customer.CustomerTypeName;
+      order.updatedAt = updatedAt;
+      ordersChanged = true;
+    });
+    if (ordersChanged) {
+      writeStorageValue(ORDER_SUBMISSIONS_STORAGE_KEY, orderSubmissions);
+    }
+
+    const adminOrders = readStorageArray(ADMIN_ORDERS_STORAGE_KEY);
+    let adminChanged = false;
+    adminOrders.forEach(order => {
+      const orderCustomerId = order?.CustomerID != null ? String(order.CustomerID) : null;
+      const orderAccountId = order?.AccountID != null ? String(order.AccountID) : null;
+      const matches = (orderCustomerId && orderCustomerId === customerIdString) ||
+        (accountIdString && orderAccountId && orderAccountId === accountIdString);
+      if (!matches) {
+        return;
+      }
+      if (customer.HouseAddress !== undefined) {
+        order.DeliveryAddress = customer.HouseAddress;
+      }
+      if (customer.CustomerTypeName) {
+        order.CustomerTypeName = customer.CustomerTypeName;
+      }
+      order.UpdatedAt = updatedAt;
+      adminChanged = true;
+    });
+    if (adminChanged) {
+      writeStorageValue(ADMIN_ORDERS_STORAGE_KEY, adminOrders);
+    }
+  }
+
+  function updateMockAccountRecord(customer, updates, options = {}) {
+    if (!customer || customer.AccountID == null) {
+      return null;
+    }
+    const accounts = readStorageArray(MOCK_ACCOUNTS_STORAGE_KEY);
+    const accountIdString = String(customer.AccountID);
+    const customerIdString = customer.CustomerID != null ? String(customer.CustomerID) : null;
+    const accountIndex = accounts.findIndex(acc =>
+      String(acc.accountID) === accountIdString ||
+      (customerIdString && String(acc.customerID) === customerIdString)
+    );
+    if (accountIndex === -1) {
+      if (options.silent) {
+        return null;
+      }
+      throw new Error('Account record not found in local storage.');
+    }
+
+    const targetAccount = { ...accounts[accountIndex] };
+
+    if (updates.username) {
+      const usernameLower = toLower(updates.username);
+      const duplicate = accounts.some((acc, idx) =>
+        idx !== accountIndex && toLower(acc.username) === usernameLower
+      );
+      if (duplicate) {
+        throw new Error('Username already exists. Please choose a different username.');
+      }
+      targetAccount.username = updates.username;
+    }
+
+    if (updates.email) {
+      const emailLower = toLower(updates.email);
+      const duplicateEmail = accounts.some((acc, idx) =>
+        idx !== accountIndex && toLower(acc.email) === emailLower
+      );
+      if (duplicateEmail) {
+        throw new Error('Email already registered. Please use a different email address.');
+      }
+      targetAccount.email = updates.email;
+    }
+
+    if (updates.phone) {
+      const phoneNormalised = normaliseString(updates.phone);
+      const duplicatePhone = accounts.some((acc, idx) =>
+        idx !== accountIndex && normaliseString(acc.phone) === phoneNormalised && phoneNormalised !== ''
+      );
+      if (duplicatePhone) {
+        throw new Error('Phone number already registered. Please use a different contact number.');
+      }
+      targetAccount.phone = updates.phone;
+    }
+
+    targetAccount.firstName = updates.firstName ?? targetAccount.firstName;
+    targetAccount.lastName = updates.lastName ?? targetAccount.lastName;
+    targetAccount.address = updates.address ?? targetAccount.address;
+    if (updates.customerTypeName) {
+      targetAccount.customerType = updates.customerTypeName;
+    }
+    if (updates.customerTypeID != null) {
+      targetAccount.customerTypeID = updates.customerTypeID;
+    }
+    if (updates.newPassword) {
+      targetAccount.passwordHash = hashPassword(updates.newPassword);
+    }
+    targetAccount.updatedAt = new Date().toISOString();
+
+    accounts[accountIndex] = targetAccount;
+    writeStorageValue(MOCK_ACCOUNTS_STORAGE_KEY, accounts);
+    return targetAccount;
+  }
+
+  function validateEmailFormat(email) {
+    if (!email) return true;
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  function validatePhoneNumber(phone) {
+    if (!phone) return true;
+    const digits = phone.replace(/\D/g, '');
+    return digits.length >= 7;
+  }
+
+  async function saveCustomerDetails(customer, formData, formType) {
     const modal = document.getElementById('customerDetailsModal');
     const modalContent = document.getElementById('customerModalContent');
 
+    const firstName = normaliseString(formData.get('firstName'));
+    const lastName = normaliseString(formData.get('lastName'));
+    const phone = normaliseString(formData.get('phone'));
+    const address = normaliseString(formData.get('address'));
+    const rawTypeInput = formData.get('customerType') || customer.CustomerTypeName || 'Regular';
+    const username = normaliseString(formData.get('username'));
+    const email = normaliseString(formData.get('email'));
+    const newPassword = normaliseString(formData.get('newPassword'));
+    const confirmPassword = normaliseString(formData.get('confirmPassword'));
+
+    if (!firstName) {
+      showModalToast(modalContent, 'First name is required.');
+      return;
+    }
+    if (!lastName) {
+      showModalToast(modalContent, 'Last name is required.');
+      return;
+    }
+    if (!validatePhoneNumber(phone)) {
+      showModalToast(modalContent, 'Please enter a valid contact number (at least 7 digits).');
+      return;
+    }
+    if (customer.isOnline && !username) {
+      showModalToast(modalContent, 'Username is required for online customers.');
+      return;
+    }
+    if (customer.isOnline && !email) {
+      showModalToast(modalContent, 'Email is required for online customers.');
+      return;
+    }
+    if (email && !validateEmailFormat(email)) {
+      showModalToast(modalContent, 'Please enter a valid email address.');
+      return;
+    }
+    if (newPassword || confirmPassword) {
+      if (newPassword !== confirmPassword) {
+        showModalToast(modalContent, 'Passwords do not match. Please re-enter the new password.');
+        return;
+      }
+      if (newPassword.length < 8) {
+        showModalToast(modalContent, 'Password must be at least 8 characters long.');
+        return;
+      }
+    }
+
+    const normalisedTypeName = normaliseCustomerTypeLabel(rawTypeInput, 'Regular');
+    const customerTypeID = mapCustomerTypeToId(normalisedTypeName);
+
+    if (modal) modal.classList.add('customer-modal-saving');
+
     try {
-      if (modal) modal.classList.add('customer-modal-saving');
-
-      const response = await fetch('../admin_backend/api/update_customers.php', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-      });
-
-      const result = await response.json();
-
-      if (result.status !== 'success') {
-        throw new Error(result.message || 'Failed to update customer.');
+      if (customer.isOnline) {
+        updateMockAccountRecord(customer, {
+          firstName,
+          lastName,
+          username,
+          email,
+          phone,
+          address,
+          customerTypeName: normalisedTypeName,
+          customerTypeID,
+          newPassword: newPassword || null
+        });
       }
 
-      // Update local data model
-      customer.FirstName = payload.FirstName;
-      customer.LastName = payload.LastName;
-      customer.Phone = payload.Phone;
-      customer.HouseAddress = payload.HouseAddress;
-      customer.CustomerTypeName = typeValue;
-      customer.CustomerTypeID = payload.CustomerTypeID;
+      customer.FirstName = firstName;
+      customer.LastName = lastName;
+      customer.Phone = phone;
+      customer.HouseAddress = address;
+      customer.CustomerTypeName = normalisedTypeName;
+      customer.CustomerTypeID = customerTypeID;
+      if (customer.isOnline) {
+        customer.Username = username;
+        customer.Email = email;
+      }
+      if (formType === 'walkin') {
+        customer.isOnline = false;
+      }
 
+      syncCustomerToLocalStorage(customer);
+      updateOrdersWithCustomer(customer);
       filterCustomers();
       updateStats();
       renderCustomersTable();
 
       closeCustomerModal();
+      document.dispatchEvent(new Event('logbook:refresh'));
       alert('Customer details updated successfully.');
     } catch (error) {
       console.error('Failed to update customer:', error);
-      if (modalContent) {
-        const message = document.createElement('div');
-        message.className = 'customer-modal-toast error';
-        message.textContent = error.message || 'Unable to save changes. Please try again.';
-        modalContent.appendChild(message);
-        setTimeout(() => message.remove(), 4000);
-      }
+      showModalToast(modalContent, error.message || 'Unable to save changes. Please try again.');
     } finally {
       if (modal) modal.classList.remove('customer-modal-saving');
     }
@@ -515,9 +855,9 @@
     
     // Listen for storage events to auto-refresh when customers are added
     window.addEventListener('storage', function(e) {
-      if (e.key === MOCK_ACCOUNTS_KEY) {
-        const logbookView = document.getElementById('view-logbook');
-        if (logbookView && logbookView.style.display !== 'none') {
+      if (e.key === MOCK_ACCOUNTS_STORAGE_KEY || e.key === ADMIN_CUSTOMERS_STORAGE_KEY) {
+        const logbookViewEl = document.getElementById('view-logbook');
+        if (logbookViewEl && logbookViewEl.style.display !== 'none') {
           loadCustomers();
         }
       }
@@ -528,8 +868,7 @@
       const logbookView = document.getElementById('view-logbook');
       if (logbookView && logbookView.style.display !== 'none') {
         const currentCount = allCustomers.length;
-        const mockAccounts = localStorage.getItem(MOCK_ACCOUNTS_KEY);
-        const accounts = mockAccounts ? JSON.parse(mockAccounts) : [];
+        const accounts = readStorageArray(MOCK_ACCOUNTS_STORAGE_KEY).filter(acc => acc.role !== 'Admin');
         if (accounts.length !== currentCount) {
           loadCustomers();
         }

@@ -77,24 +77,27 @@
 /* Hide topbar when orders view is active - handled via JavaScript */
 
 .orders-page-header {
-    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-light) 100%);
+    background: var(--primary-blue);
     color: var(--white);
     border-radius: 12px;
-    padding: 16px 20px;
+    padding: 24px 32px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    margin-bottom: 16px;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 24px;
     box-shadow: var(--shadow-blue);
     margin-top: 0;
     flex-shrink: 0;
 }
 
 .orders-page-title {
-    font-size: 20px;
+    font-size: 28px;
     font-weight: 700;
     letter-spacing: -0.5px;
     margin: 0;
+    color: var(--white);
+    text-align: left;
 }
 
 .orders-filter-card {
@@ -173,42 +176,42 @@
 }
 
 .btn-apply {
-    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-light) 100%);
+    background: var(--primary-blue);
     color: var(--white);
     border: none;
     padding: 12px 32px;
-    border-radius: 10px;
+    border-radius: 999px;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 15px;
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: var(--shadow-sm);
     min-width: 100px;
 }
 
-.btn-apply:hover {
+#view-orders .filter-actions .btn-apply:hover {
     box-shadow: var(--shadow-md);
     transform: translateY(-2px);
 }
 
-.btn-reset {
-    background: var(--medium-gray);
-    color: var(--white);
+#view-orders .filter-actions .btn-reset {
+    background: var(--light-gray);
+    color: var(--text-dark);
     border: none;
     padding: 12px 32px;
-    border-radius: 10px;
+    border-radius: 999px;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 15px;
     cursor: pointer;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: var(--shadow-sm);
     min-width: 100px;
 }
 
-.btn-reset:hover {
+#view-orders .filter-actions .btn-reset:hover {
     background: #64748B;
-    transform: translateY(-2px);
     box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
 }
 
 .orders-table-container {
@@ -224,7 +227,7 @@
 .orders-table-header {
     display: grid;
     grid-template-columns: 80px 1.2fr 120px 120px 120px 120px 120px 120px;
-    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-dark) 100%);
+    background: var(--primary-blue);
     color: var(--white);
     font-weight: 700;
     border-radius: 8px 8px 0 0;
@@ -348,7 +351,7 @@
     justify-content: space-between;
     padding: 22px 28px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.18);
-    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-light) 100%);
+    background: var(--primary-blue);
     border-radius: 16px 16px 0 0;
 }
 
@@ -379,7 +382,7 @@
 
 .order-details-modal-content {
     padding: 28px 32px 32px;
-    background: linear-gradient(180deg, rgba(237, 240, 255, 0.6) 0%, rgba(255, 255, 255, 0.9) 60%, #FFFFFF 100%);
+    background: #EDF0FF;
 }
 
 .order-details-wrapper {
@@ -542,7 +545,7 @@
 }
 
 .order-summary-card.is-emphasis {
-    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-light) 100%);
+    background: var(--primary-blue);
     color: var(--white);
     border: none;
     box-shadow: var(--shadow-md);
@@ -657,7 +660,7 @@
 }
 
 .order-items-table thead th {
-    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-light) 100%);
+    background: var(--primary-blue);
     color: var(--white);
     padding: 14px 16px;
     text-align: left;

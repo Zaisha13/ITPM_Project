@@ -4,25 +4,50 @@
   const ADMIN_SESSION_KEY = 'admin_session';
 
   // DOM References
-  const viewAdminMgmt = document.getElementById('view-admin-mgmt');
-  const adminFormSection = document.getElementById('adminFormSection');
-  const adminForm = document.getElementById('adminForm');
-  const adminFormTitle = document.getElementById('adminFormTitle');
-  const btnCancelAdmin = document.getElementById('btnCancelAdmin');
+  let viewAdminMgmt;
+  let adminFormSection;
+  let adminForm;
+  let adminFormTitle;
+  let btnCancelAdmin;
   
   // Form inputs
-  const adminIdInput = document.getElementById('adminId');
-  const adminFirstNameInput = document.getElementById('adminFirstName');
-  const adminLastNameInput = document.getElementById('adminLastName');
-  const adminUsernameInput = document.getElementById('adminUsername');
-  const adminEmailInput = document.getElementById('adminEmail');
-  const adminPhoneInput = document.getElementById('adminPhone');
-  const adminPasswordInput = document.getElementById('adminPassword');
-  const adminConfirmPasswordInput = document.getElementById('adminConfirmPassword');
-  const passwordErrorEl = document.getElementById('adminPasswordError');
-  const passwordStrengthLabelEl = document.getElementById('adminPasswordStrengthLabel');
-  const passwordStrengthBarEl = document.getElementById('adminPasswordStrengthBar');
-  const passwordToggleButtons = document.querySelectorAll('.password-toggle-btn');
+  let adminIdInput;
+  let adminFirstNameInput;
+  let adminLastNameInput;
+  let adminUsernameInput;
+  let adminEmailInput;
+  let adminPhoneInput;
+  let adminCurrentPasswordInput;
+  let adminPasswordInput;
+  let adminConfirmPasswordInput;
+  let passwordErrorEl;
+  let passwordStrengthLabelEl;
+  let passwordStrengthBarEl;
+  let passwordToggleButtons;
+
+  function refreshDomReferences() {
+    viewAdminMgmt = document.getElementById('view-admin-mgmt');
+    adminFormSection = document.getElementById('adminFormSection');
+    adminForm = document.getElementById('adminForm');
+    adminFormTitle = document.getElementById('adminFormTitle');
+    btnCancelAdmin = document.getElementById('btnCancelAdmin');
+
+    adminIdInput = document.getElementById('adminId');
+    adminFirstNameInput = document.getElementById('adminCredentialFirstName');
+    adminLastNameInput = document.getElementById('adminCredentialLastName');
+    adminUsernameInput = document.getElementById('adminCredentialUsername');
+    adminEmailInput = document.getElementById('adminCredentialEmail');
+    adminPhoneInput = document.getElementById('adminCredentialPhone');
+    adminCurrentPasswordInput = document.getElementById('adminCredentialCurrentPassword');
+    adminPasswordInput = document.getElementById('adminCredentialPassword');
+    adminConfirmPasswordInput = document.getElementById('adminCredentialConfirmPassword');
+    passwordErrorEl = document.getElementById('adminPasswordError');
+    passwordStrengthLabelEl = document.getElementById('adminPasswordStrengthLabel');
+    passwordStrengthBarEl = document.getElementById('adminPasswordStrengthBar');
+    passwordToggleButtons = viewAdminMgmt
+      ? Array.from(viewAdminMgmt.querySelectorAll('.password-toggle-btn'))
+      : [];
+  }
 
   function hashPassword(str) {
     let hash = 0;
@@ -158,6 +183,9 @@
   }
 
   function updatePasswordStrength() {
+    if (!adminPasswordInput || !passwordStrengthLabelEl || !passwordStrengthBarEl) {
+      refreshDomReferences();
+    }
     if (!passwordStrengthLabelEl || !passwordStrengthBarEl || !adminPasswordInput) {
       return;
     }
@@ -176,6 +204,9 @@
 
   function validatePasswordMatch(options = {}) {
     const { showEmptyWarning = false } = options;
+    if (!adminPasswordInput || !adminConfirmPasswordInput) {
+      refreshDomReferences();
+    }
 
     if (!adminPasswordInput || !adminConfirmPasswordInput) {
       return true;
@@ -213,55 +244,133 @@
     return true;
   }
 
+  function getToggleTarget(button) {
+    if (!button) {
+      return null;
+    }
+    const targetId = button.getAttribute('data-toggle-password');
+    if (!targetId) {
+      return null;
+    }
+    return document.getElementById(targetId);
+  }
+
+  function setPasswordVisibility(button, visible, { focusInput = false } = {}) {
+    if (!button) return;
+    const targetInput = getToggleTarget(button);
+    if (!targetInput) return;
+
+    const shouldShow = Boolean(visible);
+    targetInput.type = shouldShow ? 'text' : 'password';
+    button.classList.toggle('is-visible', shouldShow);
+    button.setAttribute('data-password-visible', shouldShow ? 'true' : 'false');
+    button.setAttribute('aria-pressed', shouldShow ? 'true' : 'false');
+    button.setAttribute('aria-label', shouldShow ? 'Hide password' : 'Show password');
+
+    if (shouldShow && focusInput) {
+      targetInput.focus();
+      const valueLength = targetInput.value.length;
+      try {
+        targetInput.setSelectionRange(valueLength, valueLength);
+      } catch (error) {
+        // Some browsers do not support setSelectionRange on certain inputs.
+      }
+    }
+  }
+
+  function togglePasswordVisibility(button) {
+    if (!button) return;
+    const targetInput = getToggleTarget(button);
+    if (!targetInput) return;
+
+    const shouldShow = targetInput.type === 'password';
+    setPasswordVisibility(button, shouldShow, { focusInput: true });
+  }
+
   function resetPasswordFields() {
+    if (!adminCurrentPasswordInput || !adminPasswordInput || !adminConfirmPasswordInput) {
+      refreshDomReferences();
+    }
+    if (adminCurrentPasswordInput) {
+      adminCurrentPasswordInput.value = '';
+    }
     if (adminPasswordInput) {
       adminPasswordInput.value = '';
     }
     if (adminConfirmPasswordInput) {
       adminConfirmPasswordInput.value = '';
     }
+    if (passwordToggleButtons && passwordToggleButtons.length) {
+      passwordToggleButtons.forEach((button) => {
+        setPasswordVisibility(button, false);
+      });
+    }
     updatePasswordStrength();
     setPasswordError('');
   }
 
-  function togglePasswordVisibility(button) {
-    if (!button) return;
-    const targetId = button.getAttribute('data-toggle-password');
-    if (!targetId) return;
-
-    const targetInput = document.getElementById(targetId);
-    if (!targetInput) return;
-
-    const shouldShow = targetInput.type === 'password';
-    targetInput.type = shouldShow ? 'text' : 'password';
-    button.classList.toggle('is-visible', shouldShow);
-    button.setAttribute('aria-label', shouldShow ? 'Hide password' : 'Show password');
-  }
-
   // Load current admin data from session
   async function loadCurrentAdmin() {
+    refreshDomReferences();
     try {
       const account = getActiveAdminAccount();
       if (account) {
+        const defaults = {
+          firstName: 'Water',
+          lastName: 'Avenue',
+          username: 'water_avenue',
+          email: 'water_avenue@gmail.com',
+          phone: '091234567890'
+        };
+
+        const normalisedAccount = { ...account };
+        let accountUpdated = false;
+
+        Object.entries(defaults).forEach(([key, value]) => {
+          const currentValue = (normalisedAccount[key] || '').toString().trim();
+          if (!currentValue) {
+            normalisedAccount[key] = value;
+            accountUpdated = true;
+          }
+        });
+
+        if (accountUpdated) {
+          const accounts = readAccounts();
+          const indexToUpdate = accounts.findIndex(acc =>
+            acc.role === 'Admin' && Number(acc.accountID) === Number(normalisedAccount.accountID)
+          );
+          if (indexToUpdate !== -1) {
+            accounts[indexToUpdate] = {
+              ...accounts[indexToUpdate],
+              firstName: normalisedAccount.firstName,
+              lastName: normalisedAccount.lastName,
+              username: normalisedAccount.username,
+              email: normalisedAccount.email,
+              phone: normalisedAccount.phone
+            };
+            writeAccounts(accounts);
+          }
+        }
+
         if (adminIdInput) {
-          adminIdInput.value = account.accountID != null ? account.accountID : '';
+          adminIdInput.value = normalisedAccount.accountID != null ? normalisedAccount.accountID : '';
         }
         if (adminFirstNameInput) {
-          adminFirstNameInput.value = account.firstName || '';
+          adminFirstNameInput.value = normalisedAccount.firstName || '';
         }
         if (adminLastNameInput) {
-          adminLastNameInput.value = account.lastName || '';
+          adminLastNameInput.value = normalisedAccount.lastName || '';
         }
         if (adminUsernameInput) {
-          adminUsernameInput.value = account.username || '';
+          adminUsernameInput.value = normalisedAccount.username || '';
         }
         if (adminEmailInput) {
-          adminEmailInput.value = account.email || '';
+          adminEmailInput.value = normalisedAccount.email || '';
         }
         if (adminPhoneInput) {
-          adminPhoneInput.value = account.phone || account.contactNumber || '';
+          adminPhoneInput.value = normalisedAccount.phone || normalisedAccount.contactNumber || '';
         }
-        refreshWelcomeBanner(account);
+        refreshWelcomeBanner(normalisedAccount);
         resetPasswordFields();
         return;
       }
@@ -275,6 +384,7 @@
 
   // Load placeholder admin data (for development/testing)
   function loadPlaceholderAdmin() {
+    refreshDomReferences();
     if (adminIdInput) {
       adminIdInput.value = '';
     }
@@ -291,7 +401,7 @@
       adminEmailInput.value = 'water_avenue@gmail.com';
     }
     if (adminPhoneInput) {
-      adminPhoneInput.value = '09123457890';
+      adminPhoneInput.value = '091234567890';
     }
     refreshWelcomeBanner({
       firstName: 'Water',
@@ -303,14 +413,18 @@
 
   // Save admin (only update current admin)
   async function saveAdmin(formData) {
+    refreshDomReferences();
     const adminId = adminIdInput.value;
     if (!adminId) {
       alert('Admin ID not found. Please log in again.');
       return;
     }
 
+    const currentPasswordValue = (formData.get('adminCurrentPassword') || '').trim();
     const passwordValue = (formData.get('adminPassword') || '').trim();
     const confirmPasswordValue = (formData.get('adminConfirmPassword') || '').trim();
+
+    setPasswordError('');
 
     if (!validatePasswordMatch({ showEmptyWarning: true })) {
       if (passwordValue && !confirmPasswordValue && adminConfirmPasswordInput) {
@@ -323,15 +437,42 @@
       return;
     }
 
+    const rawEmail = (formData.get('adminEmail') || '').toString().trim();
+    const normalizedEmail = rawEmail.toLowerCase();
+
     const adminData = {
       adminId: adminId,
       firstName: (formData.get('adminFirstName') || '').toString().trim(),
       lastName: (formData.get('adminLastName') || '').toString().trim(),
       username: (formData.get('adminUsername') || '').toString().trim(),
-      email: (formData.get('adminEmail') || '').toString().trim(),
+      email: rawEmail,
       phone: (formData.get('adminPhone') || '').toString().trim(),
       passwordUpdated: Boolean(passwordValue)
     };
+
+    if (!adminData.firstName) {
+      alert('First name cannot be empty.');
+      adminFirstNameInput?.focus();
+      return;
+    }
+
+    if (!adminData.lastName) {
+      alert('Last name cannot be empty.');
+      adminLastNameInput?.focus();
+      return;
+    }
+
+    if (!adminData.username) {
+      alert('Username cannot be empty.');
+      adminUsernameInput?.focus();
+      return;
+    }
+
+    if (!rawEmail) {
+      alert('Email cannot be empty.');
+      adminEmailInput?.focus();
+      return;
+    }
 
     const accounts = readAccounts();
     const adminIndex = accounts.findIndex(acc =>
@@ -339,6 +480,49 @@
     );
     if (adminIndex === -1) {
       alert('Admin account could not be located. Please refresh the page.');
+      return;
+    }
+
+    const storedAccount = accounts[adminIndex];
+
+    const isAttemptingPasswordChange = Boolean(passwordValue || confirmPasswordValue || currentPasswordValue);
+
+    if (isAttemptingPasswordChange) {
+      if (!currentPasswordValue) {
+        setPasswordError('Please enter your current password to update it.');
+        adminCurrentPasswordInput?.focus();
+        return;
+      }
+
+      const currentPasswordMatches = hashPassword(currentPasswordValue) === storedAccount.passwordHash;
+
+      if (!currentPasswordMatches) {
+        setPasswordError('Current password is incorrect.');
+        adminCurrentPasswordInput?.focus();
+        return;
+      }
+
+      if (!passwordValue) {
+        setPasswordError('Please enter a new password.');
+        adminPasswordInput?.focus();
+        return;
+      }
+    }
+
+    const normalizedUsername = adminData.username.toLowerCase();
+
+    const duplicateAccount = accounts.find(acc => {
+      if (Number(acc.accountID) === Number(adminId)) {
+        return false;
+      }
+      const usernameMatch = acc.username?.toString().trim().toLowerCase() === normalizedUsername;
+      const emailMatch = acc.email?.toString().trim().toLowerCase() === normalizedEmail;
+      return usernameMatch || emailMatch;
+    });
+
+    if (duplicateAccount) {
+      alert('Username or email already in use by another account. Please choose a different one.');
+      adminUsernameInput?.focus();
       return;
     }
 
@@ -383,9 +567,8 @@
   }
 
   // Initialize admin management
-  let initialized = false;
-  
   function initAdminManagement() {
+    refreshDomReferences();
     if (!viewAdminMgmt) return;
 
     // Show form section (it's now always visible)
@@ -396,44 +579,69 @@
     // Load current admin data
     loadCurrentAdmin();
 
-    // Only set up event listeners once
-    if (!initialized) {
-      // Cancel button - just reset form to current admin data
-      if (btnCancelAdmin) {
-        btnCancelAdmin.addEventListener('click', () => {
-          loadCurrentAdmin();
-        });
-      }
+    // Cancel button - just reset form to current admin data
+    if (btnCancelAdmin) {
+      btnCancelAdmin.onclick = () => {
+        loadCurrentAdmin();
+      };
+    }
 
-      // Form submit
-      if (adminForm) {
-        adminForm.addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const formData = new FormData(adminForm);
-          await saveAdmin(formData);
-        });
-      }
+    // Form submit
+    if (adminForm) {
+      adminForm.onsubmit = async (e) => {
+        e.preventDefault();
+        const formData = new FormData(adminForm);
+        await saveAdmin(formData);
+      };
+    }
 
-      if (passwordToggleButtons && passwordToggleButtons.length) {
-        passwordToggleButtons.forEach((button) => {
-          button.addEventListener('click', () => togglePasswordVisibility(button));
-        });
-      }
+    if (passwordToggleButtons && passwordToggleButtons.length) {
+      passwordToggleButtons.forEach((button) => {
+        const targetInput = getToggleTarget(button);
+        if (!targetInput) {
+          return;
+        }
 
-      if (adminPasswordInput) {
-        adminPasswordInput.addEventListener('input', () => {
-          updatePasswordStrength();
-          validatePasswordMatch();
-        });
-      }
+        const isVisible = targetInput.type === 'text';
+        setPasswordVisibility(button, isVisible, { focusInput: false });
 
-      if (adminConfirmPasswordInput) {
-        adminConfirmPasswordInput.addEventListener('input', () => {
-          validatePasswordMatch();
-        });
-      }
-      
-      initialized = true;
+        if (!button.dataset.passwordToggleBound) {
+          button.addEventListener('click', (event) => {
+            event.preventDefault();
+            togglePasswordVisibility(button);
+          });
+
+          button.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              togglePasswordVisibility(button);
+            }
+          });
+
+          button.dataset.passwordToggleBound = 'true';
+        }
+      });
+    }
+
+    if (adminPasswordInput) {
+      adminPasswordInput.oninput = () => {
+        updatePasswordStrength();
+        validatePasswordMatch();
+      };
+    }
+
+    if (adminCurrentPasswordInput) {
+      adminCurrentPasswordInput.oninput = () => {
+        if (adminCurrentPasswordInput.value) {
+          setPasswordError('');
+        }
+      };
+    }
+
+    if (adminConfirmPasswordInput) {
+      adminConfirmPasswordInput.oninput = () => {
+        validatePasswordMatch();
+      };
     }
   }
 
@@ -457,6 +665,11 @@
     
     // Stop checking after 5 seconds
     setTimeout(() => clearInterval(checkSwitchView), 5000);
+
+    // Attempt initialisation in case admin view is already visible by default
+    setTimeout(() => {
+      initAdminManagement();
+    }, 150);
   });
 
   // Expose initAdminManagement for manual triggering

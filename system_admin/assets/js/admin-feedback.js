@@ -166,7 +166,7 @@
       });
       
       const ratingClass = ratingColors[fb.rating] || 'rating-good';
-      const stars = 'â˜…'.repeat(fb.rating) + 'â˜†'.repeat(5 - fb.rating);
+      const stars = '\u2605'.repeat(fb.rating) + '\u2606'.repeat(5 - fb.rating);
       
       return `
         <div class="feedback-table-row">

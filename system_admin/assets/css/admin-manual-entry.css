@@ -300,7 +300,7 @@
 
 #view-manual-entry .btn-add,
 #view-manual-entry .btn-reset {
-    font-size: 15px;
+    font-size: 14px;
     padding: 14px 24px;
 }
 
@@ -325,6 +325,32 @@
 .order-list-empty p {
     margin: 8px 0;
     font-size: 15px;
+}
+
+#view-manual-entry .order-item-delete {
+    background: #f44336;
+    color: #fff;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-size: 16px;
+    line-height: 1;
+    padding: 0;
+}
+
+#view-manual-entry .order-item-delete:hover {
+    background: #d32f2f;
+}
+
+#view-manual-entry .order-item-delete:focus-visible {
+    outline: 2px solid rgba(244, 67, 54, 0.6);
+    outline-offset: 2px;
 }
 
 .order-list-hint {

@@ -32,13 +32,21 @@
 }
 
 #sales-table {
-    --admin-table-min-width: 1080px;
-    --admin-table-grid: 96px minmax(190px, 1.2fr) minmax(250px, 1.55fr) 120px 120px 120px 140px 140px 140px;
+    --admin-table-min-width: 860px;
+    --admin-table-cell-padding-x: 10px;
+    --admin-table-cell-padding-y: 10px;
+    --admin-table-header-font-size: 10px;
+    --admin-table-cell-font-size: 11px;
+    --admin-table-grid: 72px 148px 200px 110px 98px 98px 100px 110px 110px;
 }
 
 #cancelled-table {
-    --admin-table-min-width: 1200px;
-    --admin-table-grid: 96px minmax(190px, 1.1fr) minmax(250px, 1.5fr) 120px 120px 120px 120px 130px 140px 150px;
+    --admin-table-min-width: 960px;
+    --admin-table-cell-padding-x: 10px;
+    --admin-table-cell-padding-y: 10px;
+    --admin-table-header-font-size: 10px;
+    --admin-table-cell-font-size: 11px;
+    --admin-table-grid: 72px 148px 200px 110px 98px 105px 100px 100px 110px 110px;
 }
 
 #loan-orders-table {
@@ -59,7 +67,7 @@
 .table-header {
     display: grid;
     grid-template-columns: var(--admin-table-grid, repeat(auto-fit, minmax(140px, 1fr)));
-    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-dark) 100%);
+    background: var(--primary-blue);
     color: var(--white);
     font-weight: 700;
     letter-spacing: 0.3px;
@@ -112,19 +120,10 @@
     padding: var(--admin-table-cell-padding-y) var(--admin-table-cell-padding-x);
     font-size: var(--admin-table-cell-font-size);
     color: var(--text-dark);
-    gap: 8px;
+    gap: 0px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-.admin-table-header > div:nth-child(3),
-.table-header > div:nth-child(3),
-.admin-table-row > div:nth-child(3),
-.table-row > div:nth-child(3) {
-    white-space: normal;
-    text-overflow: initial;
-    word-break: break-word;
 }
 
 #sales-table .admin-table-header > div:nth-child(4),
@@ -167,6 +166,180 @@
 #cancelled-table .admin-table-row > div:nth-child(8) {
     justify-content: center;
     text-align: center;
+}
+
+#sales-table .admin-table-header,
+#sales-table .admin-table-row,
+#cancelled-table .admin-table-header,
+#cancelled-table .admin-table-row {
+    display: flex !important;
+    flex-wrap: nowrap;
+    width: 100%;
+    min-width: var(--admin-table-min-width);
+    gap: 0;
+}
+
+#sales-table .admin-table-header > div,
+#sales-table .admin-table-row > div,
+#cancelled-table .admin-table-header > div,
+#cancelled-table .admin-table-row > div {
+    flex: 0 0 auto;
+    min-width: 0;
+    max-width: 100%;
+}
+
+#sales-table .admin-table-header > div:nth-child(1),
+#sales-table .admin-table-row > div:nth-child(1) {
+    flex: 0 0 clamp(60px, 7%, 80px);
+}
+
+#sales-table .admin-table-header > div:nth-child(2),
+#sales-table .admin-table-row > div:nth-child(2) {
+    flex: 1 1 clamp(150px, 18%, 220px);
+}
+
+#sales-table .admin-table-header > div:nth-child(3),
+#sales-table .admin-table-row > div:nth-child(3) {
+    flex: 1 1 clamp(170px, 22%, 260px);
+}
+
+#sales-table .admin-table-header > div:nth-child(4),
+#sales-table .admin-table-row > div:nth-child(4) {
+    flex: 0 0 clamp(100px, 11%, 140px);
+}
+
+#sales-table .admin-table-header > div:nth-child(5),
+#sales-table .admin-table-row > div:nth-child(5) {
+    flex: 0 0 clamp(86px, 10%, 120px);
+}
+
+#sales-table .admin-table-header > div:nth-child(6),
+#sales-table .admin-table-row > div:nth-child(6) {
+    flex: 0 0 clamp(90px, 10%, 120px);
+}
+
+#sales-table .admin-table-header > div:nth-child(7),
+#sales-table .admin-table-row > div:nth-child(7) {
+    flex: 0 0 clamp(90px, 10%, 120px);
+}
+
+#sales-table .admin-table-header > div:nth-child(8),
+#sales-table .admin-table-row > div:nth-child(8) {
+    flex: 0 0 clamp(100px, 11%, 130px);
+}
+
+#sales-table .admin-table-header > div:nth-child(9),
+#sales-table .admin-table-row > div:nth-child(9) {
+    flex: 0 0 clamp(100px, 11%, 130px);
+}
+
+#cancelled-table .admin-table-header > div:nth-child(1),
+#cancelled-table .admin-table-row > div:nth-child(1) {
+    flex: 0 0 clamp(60px, 6%, 80px);
+}
+
+#cancelled-table .admin-table-header > div:nth-child(2),
+#cancelled-table .admin-table-row > div:nth-child(2) {
+    flex: 1 1 clamp(150px, 17%, 220px);
+}
+
+#cancelled-table .admin-table-header > div:nth-child(3),
+#cancelled-table .admin-table-row > div:nth-child(3) {
+    flex: 1 1 clamp(170px, 20%, 240px);
+}
+
+#cancelled-table .admin-table-header > div:nth-child(4),
+#cancelled-table .admin-table-row > div:nth-child(4) {
+    flex: 0 0 clamp(100px, 10%, 130px);
+}
+
+#cancelled-table .admin-table-header > div:nth-child(5),
+#cancelled-table .admin-table-row > div:nth-child(5) {
+    flex: 0 0 clamp(86px, 9%, 115px);
+}
+
+#cancelled-table .admin-table-header > div:nth-child(6),
+#cancelled-table .admin-table-row > div:nth-child(6) {
+    flex: 0 0 clamp(86px, 9%, 115px);
+}
+
+#cancelled-table .admin-table-header > div:nth-child(7),
+#cancelled-table .admin-table-row > div:nth-child(7) {
+    flex: 0 0 clamp(86px, 9%, 115px);
+}
+
+#cancelled-table .admin-table-header > div:nth-child(8),
+#cancelled-table .admin-table-row > div:nth-child(8) {
+    flex: 0 0 clamp(86px, 9%, 115px);
+}
+
+#cancelled-table .admin-table-header > div:nth-child(9),
+#cancelled-table .admin-table-row > div:nth-child(9) {
+    flex: 0 0 clamp(100px, 10%, 130px);
+}
+
+#cancelled-table .admin-table-header > div:nth-child(10),
+#cancelled-table .admin-table-row > div:nth-child(10) {
+    flex: 0 0 clamp(100px, 10%, 130px);
+}
+
+#sales-table .admin-table-header > div:nth-child(3),
+#sales-table .admin-table-row > div:nth-child(3),
+#cancelled-table .admin-table-header > div:nth-child(3),
+#cancelled-table .admin-table-row > div:nth-child(3) {
+    white-space: normal;
+    text-overflow: initial;
+    overflow: visible;
+    align-items: flex-start;
+}
+
+#sales-table .admin-table-header > div,
+#sales-table .admin-table-row > div,
+#cancelled-table .admin-table-header > div,
+#cancelled-table .admin-table-row > div {
+    white-space: normal;
+    text-overflow: initial;
+    overflow: visible;
+}
+
+#sales-table .admin-table-row > div,
+#cancelled-table .admin-table-row > div {
+    align-items: flex-start;
+}
+
+#sales-table .admin-table-header > div:nth-child(1),
+#sales-table .admin-table-row > div:nth-child(1),
+#sales-table .admin-table-header > div:nth-child(4),
+#sales-table .admin-table-row > div:nth-child(4),
+#sales-table .admin-table-header > div:nth-child(5),
+#sales-table .admin-table-row > div:nth-child(5),
+#sales-table .admin-table-header > div:nth-child(6),
+#sales-table .admin-table-row > div:nth-child(6),
+#sales-table .admin-table-header > div:nth-child(7),
+#sales-table .admin-table-row > div:nth-child(7),
+#sales-table .admin-table-header > div:nth-child(8),
+#sales-table .admin-table-row > div:nth-child(8),
+#sales-table .admin-table-header > div:nth-child(9),
+#sales-table .admin-table-row > div:nth-child(9),
+#cancelled-table .admin-table-header > div:nth-child(1),
+#cancelled-table .admin-table-row > div:nth-child(1),
+#cancelled-table .admin-table-header > div:nth-child(4),
+#cancelled-table .admin-table-row > div:nth-child(4),
+#cancelled-table .admin-table-header > div:nth-child(5),
+#cancelled-table .admin-table-row > div:nth-child(5),
+#cancelled-table .admin-table-header > div:nth-child(6),
+#cancelled-table .admin-table-row > div:nth-child(6),
+#cancelled-table .admin-table-header > div:nth-child(7),
+#cancelled-table .admin-table-row > div:nth-child(7),
+#cancelled-table .admin-table-header > div:nth-child(8),
+#cancelled-table .admin-table-row > div:nth-child(8),
+#cancelled-table .admin-table-header > div:nth-child(9),
+#cancelled-table .admin-table-row > div:nth-child(9),
+#cancelled-table .admin-table-header > div:nth-child(10),
+#cancelled-table .admin-table-row > div:nth-child(10) {
+    white-space: nowrap;
+    text-overflow: initial;
+    overflow: visible;
 }
 
 #loan-orders-table .admin-table-header > div:nth-child(3),

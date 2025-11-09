@@ -1962,6 +1962,23 @@ document.addEventListener('DOMContentLoaded', () => {
     loadCapacity();
   }, 2000); // Check every 2 seconds
 
+  window.addEventListener('storage', (event) => {
+    if (event.key === 'mock_accounts') {
+      checkAuth().then(() => {
+        const profileModal = document.getElementById('profileModal');
+        if (profileModal && profileModal.style.display === 'flex') {
+          loadProfileData();
+        }
+      });
+    }
+    if (event.key === 'orderSubmissions') {
+      const profileModal = document.getElementById('profileModal');
+      if (profileModal && profileModal.style.display === 'flex') {
+        loadOrderHistory();
+      }
+    }
+  });
+
   // =====================================
   // SMOOTH SCROLL & PARALLAX EFFECTS
   // =====================================

@@ -67,23 +67,77 @@ try {
             $stmt->execute(['operating_days', $operatingDays, $operatingDays]);
             
         } else if ($type === 'maintenance') {
-            $active = isset($input['maintenanceActive']) && $input['maintenanceActive'] ? '1' : '0';
-            $title = $input['maintenanceTitle'] ?? '';
-            $message = $input['maintenanceMessage'] ?? '';
-            $startDate = $input['maintenanceStartDate'] ?? '';
-            $endDate = $input['maintenanceEndDate'] ?? '';
-            
+            $notices = [];
+
+            if (isset($input['maintenanceNotices']) && is_array($input['maintenanceNotices'])) {
+                foreach ($input['maintenanceNotices'] as $notice) {
+                    if (!is_array($notice)) {
+                        continue;
+                    }
+
+                    $id = isset($notice['id']) && is_string($notice['id']) && $notice['id'] !== ''
+                        ? $notice['id']
+                        : uniqid('notice_', true);
+
+                    $notices[] = [
+                        'id' => $id,
+                        'title' => isset($notice['title']) ? (string)$notice['title'] : '',
+                        'message' => isset($notice['message']) ? (string)$notice['message'] : '',
+                        'startDate' => isset($notice['startDate']) ? (string)$notice['startDate'] : '',
+                        'endDate' => isset($notice['endDate']) ? (string)$notice['endDate'] : '',
+                        'createdAt' => isset($notice['createdAt']) ? (string)$notice['createdAt'] : date('c')
+                    ];
+                }
+            } else {
+                // Legacy payload support (single notice fields)
+                $legacyTitle = $input['maintenanceTitle'] ?? '';
+                $legacyMessage = $input['maintenanceMessage'] ?? '';
+                $legacyStart = $input['maintenanceStartDate'] ?? '';
+                $legacyEnd = $input['maintenanceEndDate'] ?? '';
+                $legacyActive = isset($input['maintenanceActive']) && $input['maintenanceActive'];
+
+                if ($legacyActive && ($legacyTitle !== '' || $legacyMessage !== '')) {
+                    $notices[] = [
+                        'id' => uniqid('notice_', true),
+                        'title' => (string)$legacyTitle,
+                        'message' => (string)$legacyMessage,
+                        'startDate' => (string)$legacyStart,
+                        'endDate' => (string)$legacyEnd,
+                        'createdAt' => date('c')
+                    ];
+                }
+            }
+
+            $noticeJson = json_encode($notices, JSON_UNESCAPED_UNICODE);
+            if ($noticeJson === false) {
+                throw new Exception('Failed to encode maintenance notices');
+            }
+
             $stmt = $conn->prepare("
                 INSERT INTO tbl_system_config (ConfigKey, ConfigValue) 
                 VALUES (?, ?)
                 ON DUPLICATE KEY UPDATE ConfigValue = ?
             ");
-            
-            $stmt->execute(['maintenance_active', $active, $active]);
-            $stmt->execute(['maintenance_title', $title, $title]);
-            $stmt->execute(['maintenance_message', $message, $message]);
-            $stmt->execute(['maintenance_start_date', $startDate, $startDate]);
-            $stmt->execute(['maintenance_end_date', $endDate, $endDate]);
+
+            $stmt->execute(['maintenance_notices', $noticeJson, $noticeJson]);
+
+            // Maintain legacy fields for backward compatibility
+            $primaryNotice = !empty($notices) ? $notices[count($notices) - 1] : null;
+            $legacyActive = $primaryNotice ? '1' : '0';
+            $legacyTitle = $primaryNotice['title'] ?? '';
+            $legacyMessage = $primaryNotice['message'] ?? '';
+            $legacyStartDate = $primaryNotice['startDate'] ?? '';
+            $legacyEndDate = $primaryNotice['endDate'] ?? '';
+            $legacyId = $primaryNotice['id'] ?? '';
+            $legacyCreatedAt = $primaryNotice['createdAt'] ?? '';
+
+            $stmt->execute(['maintenance_active', $legacyActive, $legacyActive]);
+            $stmt->execute(['maintenance_title', $legacyTitle, $legacyTitle]);
+            $stmt->execute(['maintenance_message', $legacyMessage, $legacyMessage]);
+            $stmt->execute(['maintenance_start_date', $legacyStartDate, $legacyStartDate]);
+            $stmt->execute(['maintenance_end_date', $legacyEndDate, $legacyEndDate]);
+            $stmt->execute(['maintenance_id', $legacyId, $legacyId]);
+            $stmt->execute(['maintenance_created_at', $legacyCreatedAt, $legacyCreatedAt]);
             
         } else if ($type === 'contact') {
             $businessName = $input['businessName'] ?? '';

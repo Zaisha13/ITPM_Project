@@ -35,7 +35,7 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-light) 100%);
+    background: var(--primary-blue);
     color: var(--white);
     border: none;
     padding: 8px 16px;
@@ -69,7 +69,7 @@
 .admin-table-header {
     display: grid;
     grid-template-columns: 1.5fr 1fr 1fr 1.5fr 1fr 100px 120px;
-    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-dark) 100%);
+    background: var(--primary-blue);
     color: var(--white);
     font-weight: 700;
     font-size: 11px;
@@ -317,6 +317,14 @@
     display: block;
 }
 
+.password-toggle-btn[data-password-visible="true"] .icon-eye-open {
+    display: none;
+}
+
+.password-toggle-btn[data-password-visible="true"] .icon-eye-off {
+    display: block;
+}
+
 .password-strength {
     margin-top: 6px;
     display: flex;
@@ -385,7 +393,7 @@
 
 .btn-save-admin {
     flex: 1;
-    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-light) 100%);
+    background: var(--primary-blue);
     color: var(--white);
     border: none;
     padding: 12px 24px;

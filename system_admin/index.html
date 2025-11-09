@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Water Avenue — Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/admin.css">
     <link rel="stylesheet" href="assets/css/admin-login.css">
     <link rel="stylesheet" href="../customer_portal/assets/css/order.css">
@@ -32,7 +33,18 @@
                 </div>
                 <div class="form-group">
                     <label for="adminLoginPassword">Password</label>
-                    <input type="password" id="adminLoginPassword" name="adminLoginPassword" placeholder="Enter password" autocomplete="current-password" required>
+                    <div class="input-with-toggle">
+                        <input type="password" id="adminLoginPassword" name="adminLoginPassword" placeholder="Enter password" autocomplete="current-password" required>
+                        <button type="button" class="password-toggle-btn" data-toggle-password="adminLoginPassword" aria-label="Show password">
+                            <svg class="icon-eye-open" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M12 5C5.373 5 2 12 2 12s3.373 7 10 7 10-7 10-7-3.373-7-10-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"></path>
+                                <circle cx="12" cy="12" r="2.5"></circle>
+                            </svg>
+                            <svg class="icon-eye-off" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M3.53 2.47 2.47 3.53l3.02 3.02C3.182 8.005 2 12 2 12s3.373 7 10 7c2.333 0 4.283-.7 5.894-1.732l3.576 3.576 1.06-1.06L3.53 2.47zM12 17c-4.486 0-7.293-3.644-8.225-5 .422-.62 1.17-1.56 2.206-2.45l2.19 2.19A3.503 3.503 0 0 0 12 15.5c.552 0 1.078-.114 1.56-.317l1.752 1.752A8.114 8.114 0 0 1 12 17zm8.225-5c-.327.48-.782 1.133-1.35 1.79l1.074 1.074C21.203 12.833 22 12 22 12s-1.182-3.995-5.49-6.48l-1.47 1.47C17.748 8.04 19.257 9.81 20.225 12z"></path>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
                 <p id="adminLoginError" class="error-message" role="alert" aria-live="assertive"></p>
                 <button type="submit" class="btn-submit">Login</button>
@@ -158,17 +170,35 @@
                     <h2 class="section-title">Stock Overview</h2>
                     <div class="cards compact">
                         <div class="card compact card-gallons">
-                            <div class="card-icon">💧</div>
+                            <div class="card-icon" aria-hidden="true">
+                                <svg viewBox="0 0 32 32" role="presentation" focusable="false">
+                                    <path class="fill" d="M16 4c-2.76 3.36-8 10.14-8 14.2 0 4.73 3.58 8 8 8s8-3.27 8-8C24 14.14 18.76 7.36 16 4z"></path>
+                                    <path d="M16 4c-2.76 3.36-8 10.14-8 14.2 0 4.73 3.58 8 8 8s8-3.27 8-8C24 14.14 18.76 7.36 16 4z"></path>
+                                    <path d="M16 19a3.5 3.5 0 0 1-3.5-3.5"></path>
+                                </svg>
+                            </div>
                             <div class="card-label">Available Gallons</div>
                             <div class="card-value" id="availableGallons">0</div>
                         </div>
                         <div class="card compact card-round clickable-card" data-container-type="2" data-container-name="Round Containers" data-action="edit-stock">
-                            <div class="card-icon">🧴</div>
+                            <div class="card-icon" aria-hidden="true">
+                                <svg viewBox="0 0 32 32" role="presentation" focusable="false">
+                                    <path class="fill" d="M12 6h8v4h2.5A1.5 1.5 0 0 1 24 11.5V12a2 2 0 0 1-2 2h-1v10.5A3.5 3.5 0 0 1 17.5 28h-3A3.5 3.5 0 0 1 11 24.5V14h-1a2 2 0 0 1-2-2V10a1 1 0 0 1 1-1H10V7a1 1 0 0 1 1-1z"></path>
+                                    <path d="M12 6h8v4h2.5A1.5 1.5 0 0 1 24 11.5V12a2 2 0 0 1-2 2h-1v10.5A3.5 3.5 0 0 1 17.5 28h-3A3.5 3.5 0 0 1 11 24.5V14h-1a2 2 0 0 1-2-2V10a1 1 0 0 1 1-1H10V7a1 1 0 0 1 1-1z"></path>
+                                    <path d="M13 18h6"></path>
+                                </svg>
+                            </div>
                             <div class="card-label">Round Containers</div>
                             <div class="card-value" id="roundContainers">0</div>
                         </div>
                         <div class="card compact card-slim clickable-card" data-container-type="1" data-container-name="Slim Containers" data-action="edit-stock">
-                            <div class="card-icon">🫙</div>
+                            <div class="card-icon" aria-hidden="true">
+                                <svg viewBox="0 0 32 32" role="presentation" focusable="false">
+                                    <path class="fill" d="M14 6h4v4h1a1 1 0 0 1 .95 1.32L18 17v7a2 2 0 0 1-2 2h-0a2 2 0 0 1-2-2v-7l-1.95-5.68A1 1 0 0 1 12 10h2z"></path>
+                                    <path d="M14 6h4v4h1a1 1 0 0 1 .95 1.32L18 17v7a2 2 0 0 1-2 2h0a2 2 0 0 1-2-2v-7l-1.95-5.68A1 1 0 0 1 12 10h2z"></path>
+                                    <path d="M14.5 19h3"></path>
+                                </svg>
+                            </div>
                             <div class="card-label">Slim Containers</div>
                             <div class="card-value" id="slimContainers">0</div>
                         </div>
@@ -370,20 +400,31 @@
 
             <!-- Reports View -->
             <div id="view-reports" data-view="reports" style="display:none">
-                <div class="reports-header">
-                    <div class="tabs">
-                        <button class="tab active" data-tab="sales">Sales Reports</button>
-                        <button class="tab" data-tab="cancelled">Cancelled Orders</button>
-                        <button class="tab" data-tab="loans">Loans Reports</button>
+                <div class="reports-page-header">
+                    <h1 class="reports-page-title">Reports</h1>
+                    <div class="reports-header-actions">
+                        <div class="tabs reports-tabs">
+                            <button class="tab active" data-tab="sales">Sales Reports</button>
+                            <button class="tab" data-tab="cancelled">Cancelled Orders</button>
+                            <button class="tab" data-tab="loans">Loans Reports</button>
+                            <button type="button" class="tab-action" id="loansRefreshBtn" aria-label="Refresh Loans Reports" title="Refresh Loans Reports">
+                                <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                                    <path d="M3 12a9 9 0 0 1 9-9c2.36 0 4.58 0.94 6.18 2.47" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    <polyline points="21 3 21 9 15 9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></polyline>
+                                    <path d="M21 12a9 9 0 0 1-9 9c-2.36 0-4.58-0.94-6.18-2.47" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    <polyline points="3 21 3 15 9 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></polyline>
+                                </svg>
+                                <span class="sr-only">Refresh loans reports</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Sales Reports Filters -->
                 <div id="sales-filters" class="filters">
-                    <input id="repSearch" type="text" placeholder="Search by customer, ID, or item...">
+                    <input id="repSearch" type="text" placeholder="Search by customer or ID">
                     <input id="repDate" type="date" title="Select date for report">
                     <button id="repApply" class="btn primary">Apply</button>
-                    <button id="repCollapse" class="btn ghost">Collapse Table</button>
                     <div class="filter-group">
                         <label for="repContainer">Container:</label>
                         <select id="repContainer">
@@ -421,9 +462,46 @@
                     </div>
                 </div>
 
-                <!-- Loans Reports Filters (simplified) -->
+                <!-- Loans Reports Filters -->
                 <div id="loans-filters" class="filters" style="display:none">
-                    <input id="loanSearch" type="text" placeholder="Search loaners...">
+                    <input id="loanSearch" type="text" placeholder="Search by customer or ID">
+                    <input id="loanDate" type="date" title="Select date for loan report">
+                    <button id="loanApply" class="btn primary">Apply</button>
+                    <div class="filter-group">
+                        <label for="loanContainer">Container:</label>
+                        <select id="loanContainer">
+                            <option>All</option>
+                            <option>Round</option>
+                            <option>Slim</option>
+                            <option>Wilkins</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="loanOrderType">Order Type:</label>
+                        <select id="loanOrderType">
+                            <option>All</option>
+                            <option>Brand-new</option>
+                            <option>Refill</option>
+                            <option>Mixed Order</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="loanPayment">Payment:</label>
+                        <select id="loanPayment">
+                            <option>All</option>
+                            <option>Cash</option>
+                            <option>GCash</option>
+                            <option>Loan</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="loanFrequency">Frequency:</label>
+                        <select id="loanFrequency">
+                            <option>Daily</option>
+                            <option>Weekly</option>
+                            <option>Monthly</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div id="sales-metrics" class="metric-cards">
@@ -439,8 +517,8 @@
                         <div>Customer</div>
                         <div>Items</div>
                         <div>Total Amount</div>
-                        <div>Status</div>
-                        <div>Type</div>
+                        <div>Order Status</div>
+                        <div>Order Type</div>
                         <div>Payment Method</div>
                         <div>Order Date</div>
                         <div>Last Updated</div>
@@ -461,9 +539,9 @@
                         <div>Customer</div>
                         <div>Items</div>
                         <div>Total Amount</div>
-                        <div>Status</div>
+                        <div>Order Status</div>
                         <div>Payment Status</div>
-                        <div>Type</div>
+                        <div>Order Type</div>
                         <div>Payment Method</div>
                         <div>Order Date</div>
                         <div>Cancelled On</div>
@@ -490,7 +568,6 @@
                     </div>
 
                     <h3 class="section-title" style="margin-top:16px">Loan Orders (Old / New)</h3>
-                    <input id="loanSearch" type="text" class="loan-search" placeholder="Search loaners...">
                     <div class="data-table admin-table" id="loan-orders-table">
                         <div class="admin-table-header">
                             <div>Order ID</div>
@@ -1027,35 +1104,51 @@
                                 <input type="hidden" id="adminId" name="adminId">
                                 
                                 <div class="form-field">
-                                    <label for="adminFirstName">First Name</label>
-                                    <input type="text" id="adminFirstName" name="adminFirstName" placeholder="Enter first name" required>
+                                    <label for="adminCredentialFirstName">First Name</label>
+                                    <input type="text" id="adminCredentialFirstName" name="adminFirstName" placeholder="Enter first name" value="Water" required>
                                 </div>
                                 
                                 <div class="form-field">
-                                    <label for="adminLastName">Last Name</label>
-                                    <input type="text" id="adminLastName" name="adminLastName" placeholder="Enter last name" required>
+                                    <label for="adminCredentialLastName">Last Name</label>
+                                    <input type="text" id="adminCredentialLastName" name="adminLastName" placeholder="Enter last name" value="Avenue" required>
                                 </div>
                                 
                                 <div class="form-field">
-                                    <label for="adminUsername">Username</label>
-                                    <input type="text" id="adminUsername" name="adminUsername" placeholder="Enter username" required>
+                                    <label for="adminCredentialUsername">Username</label>
+                                    <input type="text" id="adminCredentialUsername" name="adminUsername" placeholder="Enter username" value="water_avenue" required>
                                 </div>
                                 
                                 <div class="form-field span-2">
-                                    <label for="adminEmail">Email</label>
-                                    <input type="email" id="adminEmail" name="adminEmail" placeholder="Enter email address" required>
+                                    <label for="adminCredentialEmail">Email</label>
+                                    <input type="email" id="adminCredentialEmail" name="adminEmail" placeholder="Enter email address" value="water_avenue@gmail.com" required>
                                 </div>
                                 
                                 <div class="form-field">
-                                    <label for="adminPhone">Phone</label>
-                                    <input type="tel" id="adminPhone" name="adminPhone" placeholder="Enter phone number">
+                                    <label for="adminCredentialPhone">Phone</label>
+                                    <input type="tel" id="adminCredentialPhone" name="adminPhone" placeholder="Enter phone number" value="091234567890">
                                 </div>
                                 
                                 <div class="form-field span-3">
-                                    <label for="adminPassword">Password</label>
+                                    <label for="adminCredentialCurrentPassword">Current Password</label>
                                     <div class="input-with-toggle">
-                                        <input type="password" id="adminPassword" name="adminPassword" placeholder="Create a new password">
-                                        <button type="button" class="password-toggle-btn" data-toggle-password="adminPassword" aria-label="Show password">
+                                        <input type="password" id="adminCredentialCurrentPassword" name="adminCurrentPassword" placeholder="Enter current password">
+                                        <button type="button" class="password-toggle-btn" data-toggle-password="adminCredentialCurrentPassword" aria-label="Show password">
+                                            <svg class="icon-eye-open" viewBox="0 0 24 24" aria-hidden="true">
+                                                <path d="M12 5C5.373 5 2 12 2 12s3.373 7 10 7 10-7 10-7-3.373-7-10-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"></path>
+                                                <circle cx="12" cy="12" r="2.5"></circle>
+                                            </svg>
+                                            <svg class="icon-eye-off" viewBox="0 0 24 24" aria-hidden="true">
+                                                <path d="M3.53 2.47 2.47 3.53l3.02 3.02C3.182 8.005 2 12 2 12s3.373 7 10 7c2.333 0 4.283-.7 5.894-1.732l3.576 3.576 1.06-1.06L3.53 2.47zM12 17c-4.486 0-7.293-3.644-8.225-5 .422-.62 1.17-1.56 2.206-2.45l2.19 2.19A3.503 3.503 0 0 0 12 15.5c.552 0 1.078-.114 1.56-.317l1.752 1.752A8.114 8.114 0 0 1 12 17zm8.225-5c-.327.48-.782 1.133-1.35 1.79l1.074 1.074C21.203 12.833 22 12 22 12s-1.182-3.995-5.49-6.48l-1.47 1.47C17.748 8.04 19.257 9.81 20.225 12z"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="form-field span-3">
+                                    <label for="adminCredentialPassword">Password</label>
+                                    <div class="input-with-toggle">
+                                        <input type="password" id="adminCredentialPassword" name="adminPassword" placeholder="Create a new password">
+                                        <button type="button" class="password-toggle-btn" data-toggle-password="adminCredentialPassword" aria-label="Show password">
                                             <svg class="icon-eye-open" viewBox="0 0 24 24" aria-hidden="true">
                                                 <path d="M12 5C5.373 5 2 12 2 12s3.373 7 10 7 10-7 10-7-3.373-7-10-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"></path>
                                                 <circle cx="12" cy="12" r="2.5"></circle>
@@ -1074,10 +1167,10 @@
                                 </div>
                                 
                                 <div class="form-field span-3">
-                                    <label for="adminConfirmPassword">Re-enter Password</label>
+                                    <label for="adminCredentialConfirmPassword">Re-enter Password</label>
                                     <div class="input-with-toggle">
-                                        <input type="password" id="adminConfirmPassword" name="adminConfirmPassword" placeholder="Re-enter password">
-                                        <button type="button" class="password-toggle-btn" data-toggle-password="adminConfirmPassword" aria-label="Show password">
+                                        <input type="password" id="adminCredentialConfirmPassword" name="adminConfirmPassword" placeholder="Re-enter password">
+                                        <button type="button" class="password-toggle-btn" data-toggle-password="adminCredentialConfirmPassword" aria-label="Show password">
                                             <svg class="icon-eye-open" viewBox="0 0 24 24" aria-hidden="true">
                                                 <path d="M12 5C5.373 5 2 12 2 12s3.373 7 10 7 10-7 10-7-3.373-7-10-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"></path>
                                                 <circle cx="12" cy="12" r="2.5"></circle>
@@ -1107,7 +1200,6 @@
                 <!-- Header Bar -->
                 <div class="feedback-page-header">
                     <h1 class="feedback-page-title">Customer Feedback</h1>
-                    <p class="feedback-page-subtitle">View and manage all customer feedback from completed orders</p>
                 </div>
 
                 <!-- Summary Cards -->
@@ -1173,7 +1265,7 @@
                             <input type="date" id="feedbackFilterDateTo" class="date-input">
                         </div>
                         <div class="filter-actions">
-                            <input type="text" id="feedbackSearch" class="feedback-search-input" placeholder="Search by customer name, order ID, or comments...">
+                            <input type="text" id="feedbackSearch" class="feedback-search-input" placeholder="Search by customer or ID">
                             <button class="btn-apply" id="feedbackApplyBtn">Apply</button>
                             <button class="btn-reset" id="feedbackResetBtn">Reset</button>
                         </div>
@@ -1208,7 +1300,6 @@
                 <div class="system-config-container">
                     <div class="system-config-header">
                         <h1 class="system-config-title">System Configuration</h1>
-                        <p class="system-config-subtitle">Manage system-wide settings, capacity limits, operating hours, and contact details</p>
                     </div>
 
                     <div class="system-config-sections">
@@ -1248,12 +1339,6 @@
                             <div class="config-section-content">
                                 <form id="maintenanceNoticeForm" class="config-form">
                                     <div class="form-field">
-                                        <label for="maintenanceActive">
-                                            <input type="checkbox" id="maintenanceActive" name="maintenanceActive" style="width: auto; margin-right: 8px;">
-                                            Enable Maintenance Notice
-                                        </label>
-                                    </div>
-                                    <div class="form-field">
                                         <label for="maintenanceTitle">Notice Title</label>
                                         <input type="text" id="maintenanceTitle" name="maintenanceTitle" placeholder="Enter notice title (e.g., 'Scheduled Maintenance')">
                                     </div>
@@ -1272,10 +1357,17 @@
                                         </div>
                                     </div>
                                     <div class="form-actions">
-                                        <button type="submit" class="btn-save-config">Save Maintenance Notice</button>
-                                        <button type="button" class="btn-clear-maintenance" id="clearMaintenanceBtn">Clear Notice</button>
+                                        <button type="submit" class="btn-save-config">Add Maintenance Notice</button>
+                                        <button type="button" class="btn-clear-maintenance" id="clearMaintenanceBtn">Clear All Notices</button>
                                     </div>
                                 </form>
+                                <div class="maintenance-notices-existing">
+                                    <h3 class="maintenance-notices-title">Saved Notices</h3>
+                                    <p class="maintenance-notices-subtitle">Newest notices appear first. Delete notices to remove them from the customer portal.</p>
+                                    <div id="maintenanceNoticesList" class="maintenance-notices-list">
+                                        <p class="maintenance-notices-empty">No maintenance notices have been added yet.</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 

@@ -415,6 +415,7 @@ body {
     position: relative;
     letter-spacing: 0.02em;
     overflow: hidden;
+    text-decoration: none;
 }
 
 .btn-primary::before {
@@ -463,6 +464,7 @@ body {
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
     letter-spacing: 0.02em;
+    text-decoration: none;
 }
 
 .btn-secondary::before {
@@ -976,7 +978,7 @@ body {
     border-radius: 28px;
     text-align: center;
     font-family: var(--font-primary);
-    font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-normal);
     font-size: 1.125rem;
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
@@ -994,6 +996,39 @@ body {
     padding: 2rem 1.5rem;
     min-height: 500px;
     justify-content: center;
+}
+
+.service-card h3 {
+    font-family: var(--font-primary);
+    font-size: 1.3rem;
+    font-weight: var(--font-weight-extrabold);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin: 0;
+    color: var(--ocean-blue);
+}
+
+.service-card p {
+    font-family: var(--font-secondary);
+    font-size: 1rem;
+    font-weight: var(--font-weight-normal);
+    color: var(--text-muted);
+    line-height: 1.75;
+    margin: 0;
+}
+
+.about-card {
+    background: var(--white);
+    border: 1.5px solid rgba(0, 188, 212, 0.16);
+    box-shadow: 0 8px 28px rgba(0, 119, 190, 0.12);
+    overflow: hidden;
+    transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.about-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 40px rgba(0, 119, 190, 0.2);
+    border-color: rgba(0, 188, 212, 0.28);
 }
 
 /* Modern Features Cards - Clean & Professional */
@@ -1222,6 +1257,14 @@ body {
     left: 0;
 }
 
+.service-card:hover h3 {
+    color: var(--text-light);
+}
+
+.service-card:hover p {
+    color: var(--text-light);
+}
+
 .why-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -1271,23 +1314,33 @@ body {
     min-height: 450px;
     object-fit: contain;
     border-radius: 20px;
-    box-shadow: 0 8px 30px rgba(0, 119, 190, 0.15),
+    box-shadow: 0 8px 30px rgba(0, 119, 190, 0.14),
                 0 4px 16px rgba(0, 188, 212, 0.12);
-    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
     display: block;
     background: transparent;
 }
 
 .about-card:hover .about-refill-image {
-    transform: scale(1.05);
-    box-shadow: 0 12px 40px rgba(0, 188, 212, 0.25),
-                0 6px 20px rgba(0, 119, 190, 0.2);
+    transform: scale(1.03);
+    box-shadow: 0 16px 40px rgba(0, 188, 212, 0.22),
+                0 10px 22px rgba(0, 119, 190, 0.2);
+}
+
+@media (max-width: 768px) {
+    .about-card {
+        min-height: 420px;
+    }
+
+    .about-refill-image {
+        min-height: 320px;
+    }
 }
 
 /* Footer - Dark Background */
 .footer {
-    background: linear-gradient(180deg, #003D5B 0%, #005A8B 100%);
-    color: var(--text-light);
+    background: #021927;
+    color: #219EBC;
     padding: 5rem 0 2.5rem;
     border-radius: 60px 60px 0 0;
     margin-top: 5rem;
@@ -1314,13 +1367,13 @@ body {
 .footer-section h3 {
     font-size: 1.25rem;
     margin-bottom: 1.25rem;
-    color: var(--text-light);
+    color: #219EBC;
     font-weight: var(--font-weight-semibold);
 }
 
 .footer-section p {
     font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.8);
+    color: #2C5F7C;
     line-height: 1.7;
     margin-bottom: 0.75rem;
 }
@@ -1332,14 +1385,14 @@ body {
 }
 
 .footer-nav a {
-    color: rgba(255, 255, 255, 0.8);
+    color: #2C5F7C;
     text-decoration: none;
     transition: all 0.3s ease;
     font-size: 0.9rem;
 }
 
 .footer-nav a:hover {
-    color: var(--text-light);
+    color: #8ECAE6;
     padding-left: 0.5rem;
 }
 
@@ -1348,12 +1401,12 @@ body {
     cursor: pointer;
     display: inline-block;
     transition: transform 0.3s ease;
-    color: rgba(255, 255, 255, 0.8);
+    color: #2C5F7C;
 }
 
 .social-icon:hover {
     transform: scale(1.15) translateY(-2px);
-    color: var(--text-light);
+    color: #219EBC;
 }
 
 .footer-bottom {
@@ -1361,7 +1414,7 @@ body {
     padding-top: 2rem;
     text-align: center;
     font-size: 0.875rem;
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(33, 158, 188, 0.7);
 }
 
 /* Modal Overlay */
@@ -1812,10 +1865,10 @@ body {
 /* Operating Hours Modal - Clean & Professional Design */
 .modal-content.operating-hours-modal,
 .operating-hours-modal {
-    max-width: 1400px !important;
-    width: 95% !important;
-    max-height: 90vh;
-    padding: 1.5rem 2rem 2rem;
+    max-width: 1100px !important;
+    width: 88% !important;
+    max-height: 88vh;
+    padding: 1.5rem 1.75rem 1.75rem;
     background: #FFFFFF !important;
     border-radius: 28px;
     box-shadow: 0 25px 70px rgba(0, 119, 190, 0.35),
@@ -2004,16 +2057,14 @@ body {
 }
 
 .days-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.75rem;
     background: transparent;
     padding: 0;
     border-radius: 0;
     border: none;
     box-shadow: none;
-    max-height: 300px;
-    overflow-y: auto;
 }
 
 .days-list > *,
@@ -2027,14 +2078,14 @@ body {
     padding: 0.75rem 1.25rem;
     padding-left: 2.5rem;
     position: relative;
-    border-radius: 12px;
-    display: block;
-    background: linear-gradient(135deg, rgba(0, 188, 212, 0.2) 0%, rgba(77, 208, 225, 0.15) 100%);
-    margin-bottom: 0.5rem;
+    border-radius: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    background: linear-gradient(135deg, rgba(0, 188, 212, 0.24) 0%, rgba(77, 208, 225, 0.18) 100%);
     text-align: left;
     border: 2px solid rgba(0, 188, 212, 0.3);
     box-shadow: 0 2px 8px rgba(0, 188, 212, 0.15);
-    min-width: 120px;
 }
 
 .days-list > *::before,

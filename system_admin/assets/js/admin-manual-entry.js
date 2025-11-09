@@ -189,16 +189,31 @@
     }
   }
   
+  const CURRENCY_FORMATTER = new Intl.NumberFormat('en-PH', {
+    style: 'currency',
+    currency: 'PHP',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+
+  function formatCurrency(value) {
+    const numericValue = Number.isFinite(value) ? value : 0;
+    return CURRENCY_FORMATTER.format(numericValue);
+  }
+
   function updateSubtotalUI() {
     const price = getUnitPrice(adminContainerType, adminOrderType);
     const total = price * adminQuantity;
     const subtotalEl = document.getElementById("adminSubtotal");
-    if (subtotalEl) subtotalEl.textContent = `â‚±${total}`;
+    if (subtotalEl) subtotalEl.textContent = formatCurrency(total);
   }
   
   function updateWilkinsPriceUI() {
     const wilkinsPriceEl = document.getElementById("adminWilkinsPrice");
-    if (wilkinsPriceEl) wilkinsPriceEl.textContent = `â‚±${getUnitPrice('wilkins','refill') * adminWilkinsQty}`;
+    if (wilkinsPriceEl) {
+      const total = getUnitPrice('wilkins','refill') * adminWilkinsQty;
+      wilkinsPriceEl.textContent = formatCurrency(total);
+    }
   }
   
   function updateTotals() {
@@ -211,9 +226,9 @@
     const wilkinsTotalEl = document.getElementById("adminWilkinsTotal");
     const grandTotalEl = document.getElementById("adminGrandTotal");
     
-    if (containersTotalEl) containersTotalEl.textContent = `â‚±${containersTotal}`;
-    if (wilkinsTotalEl) wilkinsTotalEl.textContent = `â‚±${wilkinsTotal}`;
-    if (grandTotalEl) grandTotalEl.textContent = `â‚±${grand}`;
+    if (containersTotalEl) containersTotalEl.textContent = formatCurrency(containersTotal);
+    if (wilkinsTotalEl) wilkinsTotalEl.textContent = formatCurrency(wilkinsTotal);
+    if (grandTotalEl) grandTotalEl.textContent = formatCurrency(grand);
   }
   
   function renderOrders() {
@@ -235,8 +250,8 @@
           }</div>
           <div class="order-item-qty">x${o.quantity}</div>
         </div>
-        <div class="order-item-price">â‚±${o.total}</div>
-        <button class="order-item-delete" data-index="${i}">ðŸ—‘</button>
+        <div class="order-item-price">${formatCurrency(o.total)}</div>
+        <button class="order-item-delete" data-index="${i}" title="Remove item" aria-label="Remove item">🗑</button>
       </div>`
       )
       .join("");
@@ -991,9 +1006,8 @@
         // Prepare order data
         const isExistingCustomer = Boolean(adminCustomerId);
         const wasNewCustomer = !isExistingCustomer;
-        const customerTypeId = isExistingCustomer
-          ? (regularCustomerEl && regularCustomerEl.value === "dealer" ? 2 : 1)
-          : 3;
+        const selectedCustomerTypeId = regularCustomerEl && regularCustomerEl.value === "dealer" ? 2 : 1;
+        const customerTypeId = selectedCustomerTypeId;
         const mopMap = { cash: 1, gcash: 2, loan: 3 };
         const receivingMethodMap = { pickup: 1, delivery: 2 };
         // Determine order type (1 = Single type, 2 = Mixed)

@@ -123,6 +123,66 @@
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
+.admin-login-container .input-with-toggle {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.admin-login-container .input-with-toggle input {
+  width: 100%;
+  padding-right: 44px;
+}
+
+.admin-login-container .password-toggle-btn {
+  position: absolute;
+  right: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: #4a5b76;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.admin-login-container .password-toggle-btn:hover,
+.admin-login-container .password-toggle-btn:focus {
+  outline: none;
+  background: rgba(11, 120, 208, 0.12);
+  color: #0b78d0;
+}
+
+.admin-login-container .password-toggle-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+.admin-login-container .password-toggle-btn .icon-eye-off {
+  display: none;
+}
+
+.admin-login-container .password-toggle-btn.is-visible .icon-eye-open {
+  display: none;
+}
+
+.admin-login-container .password-toggle-btn.is-visible .icon-eye-off {
+  display: block;
+}
+
+.admin-login-container .password-toggle-btn[data-password-visible="true"] .icon-eye-open {
+  display: none;
+}
+
+.admin-login-container .password-toggle-btn[data-password-visible="true"] .icon-eye-off {
+  display: block;
+}
+
 .admin-login-container .form-group input:focus {
   outline: none;
   border-color: #0b78d0;
@@ -132,7 +192,7 @@
 .admin-login-container .btn-submit {
   border: none;
   border-radius: 12px;
-  background: linear-gradient(135deg, #0b78d0, #0f8adf);
+  background: #0b78d0;
   color: #fff;
   font-weight: 600;
   font-size: 1rem;

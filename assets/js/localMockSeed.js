@@ -144,7 +144,7 @@
         passwordHash: hashPassword(adminPassword),
         firstName: 'Water',
         lastName: 'Avenue',
-        phone: '09123457890',
+        phone: '091234567890',
         address: 'Water Avenue HQ, Block 3 Lot 12, Antipolo City',
         customerType: 'Admin',
         customerTypeID: 0,
@@ -155,48 +155,59 @@
     } else {
       const adminAccount = { ...accounts[existingAdminIndex] };
       let adminChanged = false;
+
       if (adminAccount.role !== 'Admin') {
         adminAccount.role = 'Admin';
         adminChanged = true;
       }
-      if (adminAccount.username !== adminUsername) {
-        adminAccount.username = adminUsername;
-        adminChanged = true;
-      }
-      if (adminAccount.email !== adminEmail) {
-        adminAccount.email = adminEmail;
-        adminChanged = true;
-      }
-      const desiredHash = hashPassword(adminPassword);
-      if (adminAccount.passwordHash !== desiredHash) {
-        adminAccount.passwordHash = desiredHash;
-        adminChanged = true;
-      }
+
       if (adminAccount.customerType !== 'Admin') {
         adminAccount.customerType = 'Admin';
         adminAccount.customerTypeID = 0;
         adminChanged = true;
       }
-      if (adminAccount.firstName !== 'Water') {
+
+      if (!adminAccount.username || !adminAccount.username.toString().trim()) {
+        adminAccount.username = adminUsername;
+        adminChanged = true;
+      }
+
+      if (!adminAccount.email || !adminAccount.email.toString().trim()) {
+        adminAccount.email = adminEmail;
+        adminChanged = true;
+      }
+
+      const desiredHash = hashPassword(adminPassword);
+      if (!adminAccount.passwordHash || !adminAccount.passwordHash.toString().trim()) {
+        adminAccount.passwordHash = desiredHash;
+        adminChanged = true;
+      }
+
+      if (!adminAccount.firstName || !adminAccount.firstName.toString().trim()) {
         adminAccount.firstName = 'Water';
         adminChanged = true;
       }
-      if (adminAccount.lastName !== 'Avenue') {
+
+      if (!adminAccount.lastName || !adminAccount.lastName.toString().trim()) {
         adminAccount.lastName = 'Avenue';
         adminChanged = true;
       }
-      if (adminAccount.phone !== '09123457890') {
-        adminAccount.phone = '09123457890';
+
+      if (!adminAccount.phone || !adminAccount.phone.toString().trim()) {
+        adminAccount.phone = '091234567890';
         adminChanged = true;
       }
-      if (!adminAccount.address) {
+
+      if (!adminAccount.address || !adminAccount.address.toString().trim()) {
         adminAccount.address = 'Water Avenue HQ, Block 3 Lot 12, Antipolo City';
         adminChanged = true;
       }
+
       if (!adminAccount.createdAt) {
         adminAccount.createdAt = createdAt;
         adminChanged = true;
       }
+
       if (adminChanged) {
         accounts[existingAdminIndex] = adminAccount;
         changed = true;

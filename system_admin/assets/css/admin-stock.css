@@ -41,7 +41,7 @@
 }
 
 .stock-modal-header {
-    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-light) 100%);
+    background: var(--primary-blue);
     color: var(--white);
     padding: 14px 18px;
     display: flex;
@@ -55,6 +55,7 @@
     font-weight: 700;
     letter-spacing: -0.5px;
     margin: 0;
+    color: var(--white);
 }
 
 .stock-modal-close {
@@ -89,7 +90,7 @@
 }
 
 .stock-current-display {
-    background: linear-gradient(135deg, #E0F2FE 0%, #BAE6FD 100%);
+    background: #E0F2FE;
     border: 1px solid var(--light-gray);
     border-radius: 10px;
     padding: 12px 16px;
@@ -186,7 +187,7 @@
 
 .btn-stock-add {
     flex: 1;
-    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-light) 100%);
+    background: var(--primary-blue);
     color: var(--white);
     border: none;
     padding: 10px 20px;
@@ -270,7 +271,7 @@
 }
 
 .stock-logs-count {
-    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-light) 100%);
+    background: var(--primary-blue);
     color: var(--white);
     font-weight: 600;
     padding: 6px 14px;
@@ -291,7 +292,7 @@
 }
 
 .stock-logs-filter-section {
-    background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
+    background: #E0F2FE;
     border: 1px solid var(--accent-blue);
     border-radius: 12px;
     padding: 16px 20px;
@@ -354,7 +355,7 @@
 .stock-logs-table-header {
     display: grid;
     grid-template-columns: 140px 1.8fr 1fr 1fr 1fr 2fr;
-    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-dark) 100%);
+    background: var(--primary-blue);
     color: var(--white);
     font-weight: 700;
     font-size: 11px;
@@ -388,7 +389,7 @@
 }
 
 .stock-logs-row:hover {
-    background: linear-gradient(135deg, #F8FAFC 0%, #F0F9FF 100%);
+    background: #F0F9FF;
     transform: translateX(2px);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
@@ -480,7 +481,7 @@
 .logbook-table-container .logbook-table-header {
     display: grid;
     grid-template-columns: 0.6fr 1fr 1fr 0.9fr 1fr 1.6fr 1fr;
-    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-dark) 100%);
+    background: var(--primary-blue);
     color: var(--white);
     font-weight: 700;
     font-size: 11px;
@@ -525,7 +526,7 @@
 
 .logbook-table-container .logbook-table-row-clickable:hover,
 .logbook-table-container .logbook-table-row-clickable:focus {
-    background: linear-gradient(135deg, #F8FAFF 0%, #EEF3FF 100%);
+    background: #EEF3FF;
     transform: translateX(2px);
     box-shadow: 0 4px 16px rgba(47, 59, 143, 0.12);
 }
@@ -603,7 +604,7 @@
 }
 
 .customer-profile-sidebar {
-    background: linear-gradient(180deg, var(--primary-blue) 0%, var(--primary-dark) 100%);
+    background: var(--primary-blue);
     color: var(--white);
     border-radius: 18px;
     padding: 28px 24px;
@@ -770,7 +771,7 @@
 }
 
 .customer-walkin-header {
-    background: linear-gradient(135deg, #EEF4FF 0%, #DDE7FF 100%);
+    background: #DDE7FF;
     border: 1px solid var(--light-gray);
     border-radius: 18px;
     padding: 24px 28px;
@@ -816,7 +817,7 @@
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-blue) 100%);
+    background: var(--primary-blue);
     color: var(--white);
     box-shadow: var(--shadow-sm);
 }

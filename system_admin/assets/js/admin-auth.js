@@ -119,6 +119,62 @@
     const logoutCancelBtn = document.getElementById('adminLogoutCancelBtn');
     const logoutConfirmBtn = document.getElementById('adminLogoutConfirmBtn');
     const exitButton = document.getElementById('adminLoginExitBtn');
+    const loginPasswordToggleBtn = document.querySelector('[data-toggle-password="adminLoginPassword"]');
+
+    function getToggleTarget(button) {
+      if (!button) return null;
+      const targetId = button.getAttribute('data-toggle-password');
+      if (!targetId) return null;
+      return document.getElementById(targetId);
+    }
+
+    function setPasswordVisibility(button, visible, { focusInput = false } = {}) {
+      if (!button) return;
+      const targetInput = getToggleTarget(button);
+      if (!targetInput) return;
+
+      const shouldShow = Boolean(visible);
+      targetInput.type = shouldShow ? 'text' : 'password';
+      button.classList.toggle('is-visible', shouldShow);
+      button.setAttribute('data-password-visible', shouldShow ? 'true' : 'false');
+      button.setAttribute('aria-pressed', shouldShow ? 'true' : 'false');
+      button.setAttribute('aria-label', shouldShow ? 'Hide password' : 'Show password');
+
+      if (shouldShow && focusInput) {
+        targetInput.focus();
+        const valueLength = targetInput.value.length;
+        try {
+          targetInput.setSelectionRange(valueLength, valueLength);
+        } catch (error) {
+          // Some input types may not support setSelectionRange; ignore safely.
+        }
+      }
+    }
+
+    function togglePasswordVisibility(button) {
+      if (!button) return;
+      const targetInput = getToggleTarget(button);
+      if (!targetInput) return;
+      const shouldShow = targetInput.type === 'password';
+      setPasswordVisibility(button, shouldShow, { focusInput: true });
+    }
+
+    if (loginPasswordToggleBtn) {
+      const isVisible = getToggleTarget(loginPasswordToggleBtn)?.type === 'text';
+      setPasswordVisibility(loginPasswordToggleBtn, isVisible, { focusInput: false });
+
+      loginPasswordToggleBtn.addEventListener('click', (event) => {
+        event.preventDefault();
+        togglePasswordVisibility(loginPasswordToggleBtn);
+      });
+
+      loginPasswordToggleBtn.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          togglePasswordVisibility(loginPasswordToggleBtn);
+        }
+      });
+    }
 
     if (!overlay || !loginForm || !usernameInput || !passwordInput) {
       return;
@@ -158,7 +214,7 @@
       clearAdminSession();
       updateWelcomeBanner(null);
       toggleOverlay(true);
-      window.location.href = '../customer_portal/index.html';
+      showError('You must log in to access the admin portal.');
     }
 
     loginForm.addEventListener('submit', (event) => {
@@ -228,6 +284,14 @@
     logoutModal?.addEventListener('click', (event) => {
       if (event.target === logoutModal) {
         closeLogoutModal();
+      }
+    });
+
+    loginForm.addEventListener('reset', () => {
+      if (loginPasswordToggleBtn) {
+        setPasswordVisibility(loginPasswordToggleBtn, false);
+      } else {
+        passwordInput.type = 'password';
       }
     });
 

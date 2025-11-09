@@ -207,7 +207,7 @@
 
 .toggle-btn.active,
 .toggle-btn-action.active {
-    background: linear-gradient(135deg, var(--btn-primary) 0%, var(--btn-primary-hover) 100%);
+    background: var(--btn-primary);
     color: var(--btn-text-light);
     border-color: var(--btn-primary);
     box-shadow: 0 2px 6px rgba(74, 144, 166, 0.25);
@@ -215,7 +215,7 @@
 
 .toggle-btn.active:hover,
 .toggle-btn-action.active:hover {
-    background: linear-gradient(135deg, var(--btn-primary-hover) 0%, var(--btn-primary-active) 100%);
+    background: var(--btn-primary-hover);
     transform: translateY(-1px);
     box-shadow: 0 4px 10px rgba(74, 144, 166, 0.3);
 }
@@ -249,7 +249,7 @@
     height: 32px;
     border-radius: 50%;
     border: none;
-    background: linear-gradient(135deg, var(--btn-accent) 0%, var(--btn-accent-hover) 100%);
+    background: var(--btn-accent);
     color: var(--btn-text-light);
     font-size: 14px;
     font-weight: 600;
@@ -262,7 +262,7 @@
 }
 
 .qty-btn:hover {
-    background: linear-gradient(135deg, var(--btn-accent-hover) 0%, var(--btn-primary-hover) 100%);
+    background: var(--btn-accent-hover);
     transform: translateY(-2px) scale(1.05);
     box-shadow: 0 4px 8px rgba(74, 144, 166, 0.3);
 }
@@ -376,12 +376,12 @@
 }
 
 .btn-add {
-    background: linear-gradient(135deg, var(--btn-primary) 0%, var(--btn-primary-hover) 100%);
+    background: var(--btn-primary);
     color: var(--btn-text-light);
 }
 
 .btn-add:hover {
-    background: linear-gradient(135deg, var(--btn-primary-hover) 0%, var(--btn-primary-active) 100%);
+    background: var(--btn-primary-hover);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(74, 144, 166, 0.3);
 }
@@ -392,12 +392,12 @@
 }
 
 .btn-reset {
-    background: linear-gradient(135deg, var(--btn-secondary) 0%, var(--btn-secondary-hover) 100%);
+    background: var(--btn-secondary);
     color: var(--btn-text-light);
 }
 
 .btn-reset:hover {
-    background: linear-gradient(135deg, var(--btn-secondary-hover) 0%, var(--btn-accent-hover) 100%);
+    background: var(--btn-secondary-hover);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(107, 168, 192, 0.3);
 }
@@ -636,7 +636,7 @@
     width: 100%;
     max-width: 300px;
     padding: 12px 20px;
-    background: linear-gradient(135deg, var(--btn-primary) 0%, var(--btn-primary-hover) 100%);
+    background: var(--btn-primary);
     color: var(--btn-text-light);
     border: none;
     border-radius: 12px;
@@ -665,7 +665,7 @@
 }
 
 .btn-place-order:hover {
-    background: linear-gradient(135deg, var(--btn-primary-hover) 0%, var(--btn-primary-active) 100%);
+    background: var(--btn-primary-hover);
     transform: translateY(-3px);
     box-shadow: 0 6px 16px rgba(74, 144, 166, 0.35);
 }

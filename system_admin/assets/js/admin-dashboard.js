@@ -16,7 +16,6 @@
   const repSearch = document.getElementById('repSearch');
   const repDate = document.getElementById('repDate');
   const repApply = document.getElementById('repApply');
-  const repCollapse = document.getElementById('repCollapse');
   const repContainer = document.getElementById('repContainer');
   const repOrderType = document.getElementById('repOrderType');
   const repPayment = document.getElementById('repPayment');
@@ -39,17 +38,25 @@
   const mOutstanding = document.getElementById('mOutstanding');
   const mRepayRate = document.getElementById('mRepayRate');
   const loanSearch = document.getElementById('loanSearch');
+  const loanDate = document.getElementById('loanDate');
+  const loanApply = document.getElementById('loanApply');
+  const loanContainer = document.getElementById('loanContainer');
+  const loanOrderType = document.getElementById('loanOrderType');
+  const loanPayment = document.getElementById('loanPayment');
+  const loanFrequency = document.getElementById('loanFrequency');
   const salesFilters = document.getElementById('sales-filters');
   const loansFilters = document.getElementById('loans-filters');
   const cCancelledCount = document.getElementById('cCancelledCount');
   const cCancelledGallons = document.getElementById('cCancelledGallons');
   const cCancelledRevenue = document.getElementById('cCancelledRevenue');
   const cLatestCancelled = document.getElementById('cLatestCancelled');
+  const loansRefreshBtn = document.getElementById('loansRefreshBtn');
 
   let allOrders = [];
   let currentYear; let currentMonth;
   let selectedDate = null;
   let isRefreshingOrders = false;
+  let isRefreshingLoans = false;
 
   function toNumber(value) {
     if (typeof value === 'number') {
@@ -640,7 +647,7 @@
   };
   function statusClass(s) {
     const v = (s || '').toLowerCase();
-    if (v === 'completed' || v === 'delivered') return 'status-completed';
+    if (v === 'paid' || v === 'completed' || v === 'delivered') return 'status-completed';
     if (v === 'confirmed') return 'status-confirmed';
     if (v === 'cancelled') return 'status-cancelled';
     if (v === 'for approval' || v === 'pending') return 'status-pending';
@@ -833,6 +840,82 @@
     return true;
   }
 
+  function loanMatchesFilters(order) {
+    if (!order) {
+      return false;
+    }
+
+    const query = (loanSearch?.value || '').trim().toLowerCase();
+    if (query) {
+      const idMatch = String(order.id || '').toLowerCase().includes(query);
+      const customerFields = [
+        order.customer,
+        order.customerName,
+        order.username
+      ];
+      const customerMatch = customerFields.some(name => {
+        if (!name) return false;
+        return name.toString().toLowerCase().includes(query);
+      });
+      const detailsStr = (order.details || [])
+        .map(d => `${d.qty} ${d.container} ${d.category}`)
+        .join(' ')
+        .toLowerCase();
+      if (!(idMatch || customerMatch || detailsStr.includes(query))) {
+        return false;
+      }
+    }
+
+    const container = loanContainer?.value || 'All';
+    if (container !== 'All') {
+      const hasContainer = (order.details || []).some(d => (d.container || '').toLowerCase() === container.toLowerCase());
+      if (!hasContainer) {
+        return false;
+      }
+    }
+
+    const orderType = loanOrderType?.value || 'All';
+    if (orderType !== 'All') {
+      const typeMap = { 'Brand-new': 'New Gallon', 'Refill': 'Refill' };
+      if (orderType === 'Mixed Order') {
+        const hasRefill = (order.details || []).some(d => (d.category || '').toLowerCase().includes('refill'));
+        const hasNew = (order.details || []).some(d => (d.category || '').toLowerCase().includes('new'));
+        if (!(hasRefill && hasNew)) {
+          return false;
+        }
+      } else {
+        const expected = (typeMap[orderType] || orderType).toLowerCase();
+        const hasType = (order.details || []).some(d => (d.category || '').toLowerCase().includes(expected));
+        if (!hasType) {
+          return false;
+        }
+      }
+    }
+
+    const payment = loanPayment?.value || 'All';
+    if (payment !== 'All') {
+      const orderMop = (order.mop || order.MOPName || '').toLowerCase();
+      if (orderMop !== payment.toLowerCase()) {
+        return false;
+      }
+    }
+
+    const dateValue = loanDate?.value ? loanDate.value.trim() : '';
+    if (dateValue) {
+      const freq = loanFrequency?.value || 'Daily';
+      const { start, end } = getFilterRange(dateValue, freq);
+      const fallbackDate = order.createdAt || order.orderDate || order.updatedAt;
+      const dateOnly = getDateOnlyFromString(fallbackDate || '');
+      if (dateOnly) {
+        if (dateOnly < start || dateOnly > end) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
+
   function computeGallons(orders) {
     let sum = 0;
     for (const o of orders) for (const d of (o.details || [])) sum += toNumber(d.qty);
@@ -929,13 +1012,17 @@
       const row = document.createElement('div'); row.className = 'admin-table-row';
       const orderDate = o.createdAt ? getDateOnlyFromString(o.createdAt) : '-';
       const cancelledDate = o.updatedAt ? getDateOnlyFromString(o.updatedAt) : '-';
+      const paymentStatus = (o.paymentStatus || '').trim();
+      const paymentStatusDisplay = paymentStatus
+        ? `<span class="status-badge ${statusClass(paymentStatus)}">${paymentStatus}</span>`
+        : '-';
       row.innerHTML = `
         <div data-label="Order ID">#${o.id}</div>
         <div data-label="Customer">${o.customer}</div>
         <div data-label="Items">${itemsStr || '-'}</div>
         <div data-label="Total Amount">${formatMoney(o.total)}</div>
         <div data-label="Status"><span class="status-badge ${statusClass(o.orderStatus)}">${o.orderStatus || 'Cancelled'}</span></div>
-        <div data-label="Payment Status">${o.paymentStatus || '-'}</div>
+        <div data-label="Payment Status">${paymentStatusDisplay}</div>
         <div data-label="Type">${o.orderType}</div>
         <div data-label="Payment Method">${o.mop}</div>
         <div data-label="Order Date">${orderDate}</div>
@@ -978,21 +1065,6 @@
     if (loansFilters) loansFilters.style.display = activeTab === 'loans' ? '' : 'none';
   }
 
-  function getActiveReportBody() {
-    const activeTab = getActiveReportTab();
-    if (activeTab === 'cancelled') return cancelledRows;
-    if (activeTab === 'loans') return loanRows;
-    return salesRows;
-  }
-
-  function resetCollapseState() {
-    if (!repCollapse) return;
-    const body = getActiveReportBody();
-    if (!body) return;
-    body.style.display = '';
-    repCollapse.textContent = 'Collapse Table';
-  }
-
   function renderLoans() {
     if (!goodRows || !loanRows) return; // Safety check
     // Filter out placeholder orders first
@@ -1007,20 +1079,30 @@
     const rate = paidLoans.length ? Math.round((repaidFast.length / paidLoans.length) * 100) : 0;
     mRepayRate.textContent = `${rate}%`;
 
+    const hasActiveFilters =
+      (loanSearch?.value || '').trim().length > 0 ||
+      (loanContainer?.value || 'All') !== 'All' ||
+      (loanOrderType?.value || 'All') !== 'All' ||
+      (loanPayment?.value || 'All') !== 'All' ||
+      Boolean((loanDate?.value || '').trim());
+
     // Good payers table
     goodRows.innerHTML = '';
-    // Show empty state if no good payers found (repaid within 15 days)
-    if (repaidFast.length === 0) {
+    const goodPayersFiltered = repaidFast.filter(loanMatchesFilters);
+    // Show empty state if no good payers found (repaid within 15 days) or filtered by search
+    if (goodPayersFiltered.length === 0) {
       const emptyState = document.createElement('div');
       emptyState.className = 'admin-table-row is-empty';
       emptyState.style.gridColumn = '1 / -1';
       emptyState.style.textAlign = 'center';
       emptyState.style.padding = '32px';
       emptyState.style.color = '#666';
-      emptyState.textContent = 'No good payers found (repaid within 15 days).';
+      emptyState.textContent = hasActiveFilters
+        ? 'No good payers found matching the selected filters.'
+        : 'No good payers found (repaid within 15 days).';
       goodRows.appendChild(emptyState);
     } else {
-      for (const o of repaidFast) {
+      for (const o of goodPayersFiltered) {
         const row = document.createElement('div'); row.className = 'admin-table-row';
         const orderDate = o.createdAt ? getDateOnlyFromString(o.createdAt) : '-';
         row.innerHTML = `
@@ -1034,8 +1116,7 @@
     }
 
     // Loan orders list (old/new)
-    const q = (loanSearch?.value || '').toLowerCase();
-    const loansFiltered = loans.filter(o => `${o.id}`.includes(q) || (o.customer || '').toLowerCase().includes(q));
+    const loansFiltered = loans.filter(loanMatchesFilters);
     loanRows.innerHTML = '';
     // Show empty state if no loan orders found (either no loans exist or search filters them out)
     if (loansFiltered.length === 0) {
@@ -1045,7 +1126,9 @@
       emptyState.style.textAlign = 'center';
       emptyState.style.padding = '32px';
       emptyState.style.color = '#666';
-      emptyState.textContent = 'No loan orders found matching the search criteria.';
+      emptyState.textContent = hasActiveFilters
+        ? 'No loan orders found matching the selected filters.'
+        : 'No loan orders found.';
       loanRows.appendChild(emptyState);
       return;
     }
@@ -1065,6 +1148,35 @@
     }
   }
 
+  async function refreshLoansReports() {
+    if (!loansRefreshBtn || isRefreshingLoans) {
+      return;
+    }
+
+    const originalLabel = loansRefreshBtn.getAttribute('aria-label') || 'Refresh Loans Reports';
+
+    isRefreshingLoans = true;
+    loansRefreshBtn.disabled = true;
+    loansRefreshBtn.classList.add('is-loading');
+    loansRefreshBtn.setAttribute('aria-busy', 'true');
+    loansRefreshBtn.setAttribute('aria-label', 'Refreshing Loans Reports');
+
+    try {
+      await fetchOrders();
+      renderActiveReport();
+    } catch (error) {
+      console.error('Failed to refresh loans reports:', error);
+      renderActiveReport();
+    } finally {
+      loansRefreshBtn.disabled = false;
+      loansRefreshBtn.classList.remove('is-loading');
+      loansRefreshBtn.setAttribute('aria-label', originalLabel);
+      loansRefreshBtn.setAttribute('aria-busy', 'false');
+      loansRefreshBtn.blur();
+      isRefreshingLoans = false;
+    }
+  }
+
   // View routing
   function showView(view) {
     if (view === 'reports') {
@@ -1072,7 +1184,6 @@
       viewReports.style.display = '';
       const activeTab = getActiveReportTab() || 'sales';
       updateReportsDisplay(activeTab);
-      resetCollapseState();
       renderActiveReport();
     } else {
       viewReports.style.display = 'none';
@@ -1090,31 +1201,33 @@
     if (!viewReports) return;
     const initialTab = getActiveReportTab() || 'sales';
     updateReportsDisplay(initialTab);
-    resetCollapseState();
     if (viewReports.style.display !== 'none') {
       renderActiveReport();
     }
     tabs.forEach(t => t.addEventListener('click', () => {
       const tab = t.getAttribute('data-tab') || 'sales';
       updateReportsDisplay(tab);
-      resetCollapseState();
       renderActiveReport();
     }));
     repApply?.addEventListener('click', renderActiveReport);
     repSearch?.addEventListener('input', renderActiveReport);
     [repDate, repContainer, repOrderType, repPayment, repFrequency].forEach(el => el && el.addEventListener('change', renderActiveReport));
-    repCollapse?.addEventListener('click', () => {
-      const body = getActiveReportBody();
-      if (!body) return;
-      const isHidden = body.style.display === 'none';
-      body.style.display = isHidden ? '' : 'none';
-      repCollapse.textContent = isHidden ? 'Collapse Table' : 'Expand Table';
-    });
     loanSearch?.addEventListener('input', () => {
       if (getActiveReportTab() === 'loans') {
         renderLoans();
       }
     });
+    loanApply?.addEventListener('click', () => {
+      if (getActiveReportTab() === 'loans') {
+        renderLoans();
+      }
+    });
+    [loanDate, loanContainer, loanOrderType, loanPayment, loanFrequency].forEach(el => el && el.addEventListener('change', () => {
+      if (getActiveReportTab() === 'loans') {
+        renderLoans();
+      }
+    }));
+    loansRefreshBtn?.addEventListener('click', refreshLoansReports);
   }
 
   async function init() {

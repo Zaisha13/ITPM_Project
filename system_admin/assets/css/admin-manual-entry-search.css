@@ -138,12 +138,16 @@
     align-items: center;
     margin-bottom: 24px;
     border-radius: 12px;
+    gap: 16px;
+    flex-wrap: wrap;
 }
 
 .loans-page-title {
     font-size: 28px;
-    font-weight: 600;
+    font-weight: 700;
     margin: 0;
+    color: var(--white);
+    text-align: left;
 }
 
 .loans-header-actions {
@@ -153,24 +157,25 @@
 }
 
 .btn-view-reports {
-    background: var(--accent-blue);
+    background: #4f6f86;
     color: var(--white);
     border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
+    padding: 12px 28px;
+    border-radius: 22px;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    font-weight: 500;
-    transition: all 0.2s;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
 .btn-view-reports:hover {
-    background: var(--primary-light);
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-md);
+    background: #587c96;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.18);
 }
 
 .loans-stats {
@@ -296,33 +301,34 @@
     box-shadow: 0 0 0 3px rgba(10, 74, 107, 0.1);
 }
 
-.btn-apply, .btn-reset {
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 500;
+#view-loans .filter-actions .btn-apply,
+#view-loans .filter-actions .btn-reset {
+    padding: 10px 24px;
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: 600;
     cursor: pointer;
     border: none;
     transition: all 0.2s;
 }
 
-.btn-apply {
+#view-loans .filter-actions .btn-apply {
     background: var(--primary-blue);
     color: var(--white);
 }
 
-.btn-apply:hover {
+#view-loans .filter-actions .btn-apply:hover {
     background: var(--primary-light);
     transform: translateY(-1px);
     box-shadow: var(--shadow-md);
 }
 
-.btn-reset {
+#view-loans .filter-actions .btn-reset {
     background: var(--light-gray);
     color: var(--text-dark);
 }
 
-.btn-reset:hover {
+#view-loans .filter-actions .btn-reset:hover {
     background: var(--medium-gray);
     color: var(--white);
 }
@@ -424,26 +430,26 @@
 
 .status-badge.status-for-approval,
 .status-badge.for-approval {
-    background: linear-gradient(135deg, var(--warning) 0%, #F97316 100%);
+    background: var(--warning);
     color: var(--white);
 }
 
 .status-badge.status-in-progress,
 .status-badge.in-progress,
 .status-badge.processing {
-    background: linear-gradient(135deg, var(--warning) 0%, #D97706 100%);
+    background: #D97706;
     color: var(--white);
 }
 
 .status-badge.status-ready-for-pickup,
 .status-badge.ready-for-pickup {
-    background: linear-gradient(135deg, var(--info) 0%, #1E40AF 100%);
+    background: var(--info);
     color: var(--white);
 }
 
 .status-badge.status-out-for-delivery,
 .status-badge.out-for-delivery {
-    background: linear-gradient(135deg, var(--info) 0%, #2563EB 100%);
+    background: #2563EB;
     color: var(--white);
 }
 

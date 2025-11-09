@@ -8,7 +8,7 @@
 }
 
 .system-config-header {
-    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-light) 100%);
+    background: var(--primary-blue);
     color: var(--white);
     border-radius: 12px;
     padding: 24px 32px;
@@ -16,6 +16,11 @@
     box-shadow: var(--shadow-blue);
     position: relative;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
 }
 
 .system-config-header::before {
@@ -25,7 +30,7 @@
     right: -10%;
     width: 300px;
     height: 300px;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    background: transparent;
     border-radius: 50%;
 }
 
@@ -33,9 +38,11 @@
     font-size: 28px;
     font-weight: 700;
     letter-spacing: -0.5px;
-    margin: 0 0 8px 0;
+    margin: 0;
     position: relative;
     z-index: 1;
+    color: var(--white);
+    text-align: left;
 }
 
 .system-config-subtitle {
@@ -71,7 +78,7 @@
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, var(--primary-light) 0%, var(--accent-teal) 100%);
+    background: var(--accent-teal);
     transform: scaleX(0);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -81,7 +88,7 @@
 }
 
 .config-section-header {
-    background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
+    background: #E0F2FE;
     padding: 20px 24px;
     border-bottom: 2px solid var(--light-gray);
 }
@@ -158,7 +165,7 @@
     max-width: 900px;
     margin: 0 auto;
     padding: 20px;
-    background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
+    background: #E0F2FE;
     border: 2px solid var(--light-gray);
     border-radius: 12px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -342,7 +349,7 @@
 
 /* Style the label when checkbox is checked */
 .checkbox-day:has(input[type="checkbox"]:checked) {
-    background: linear-gradient(135deg, rgba(10, 74, 107, 0.1) 0%, rgba(43, 127, 168, 0.1) 100%);
+    background: rgba(10, 74, 107, 0.12);
     border-color: var(--primary-blue);
     color: var(--primary-blue);
     font-weight: 600;
@@ -350,7 +357,7 @@
 
 /* Fallback for browsers that don't support :has() - use JavaScript class toggle instead */
 .checkbox-day.checked {
-    background: linear-gradient(135deg, rgba(10, 74, 107, 0.1) 0%, rgba(43, 127, 168, 0.1) 100%);
+    background: rgba(10, 74, 107, 0.12);
     border-color: var(--primary-blue);
     color: var(--primary-blue);
     font-weight: 600;
@@ -365,7 +372,7 @@
 }
 
 .btn-save-config {
-    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-light) 100%);
+    background: var(--primary-blue);
     color: var(--white);
     border: none;
     padding: 14px 32px;
@@ -381,7 +388,7 @@
 .btn-save-config:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
-    background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent-blue) 100%);
+    background: var(--accent-blue);
 }
 
 .btn-save-config:active {
