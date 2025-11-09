@@ -699,6 +699,12 @@
   document.addEventListener('logbook:refresh', function() {
     loadCustomers();
   });
+
+  window.addEventListener('storage', function(event) {
+    if (event.key === STORAGE_KEYS.adminCustomers) {
+      loadCustomers();
+    }
+  });
   
   // The switchView function will call renderLogbook when logbook view is shown
 })();

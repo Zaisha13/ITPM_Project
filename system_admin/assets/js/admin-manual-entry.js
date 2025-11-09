@@ -51,10 +51,142 @@
   let adminQuantity = 1;
   let adminWilkinsQty = 1;
   let adminCustomerId = null; // Store selected customer ID
+  let adminCustomerAccountId = null; // Store selected account ID (if any)
   let searchTimeout = null;
   
   function capitalize(s) {
     return s.charAt(0).toUpperCase() + s.slice(1);
+  }
+
+  function normaliseMatchValue(value) {
+    if (!value && value !== 0) return '';
+    return String(value).trim().toLowerCase();
+  }
+
+  function getPhoneDigits(value) {
+    return (value || '').toString().replace(/\D/g, '');
+  }
+
+  function resolveCustomerTypeName(customerTypeId) {
+    const id = Number(customerTypeId);
+    if (id === 2) return 'Dealer';
+    if (id === 3) return 'Walk-in';
+    return 'Regular';
+  }
+
+  function buildLocalCustomerRecord(params) {
+    const {
+      customerId,
+      firstName,
+      lastName,
+      phone,
+      address,
+      customerTypeId,
+      createdAt,
+      accountId
+    } = params;
+    return {
+      CustomerID: customerId ? Number(customerId) : null,
+      AccountID: accountId ? Number(accountId) : null,
+      FirstName: firstName || '',
+      LastName: lastName || '',
+      Phone: phone || '',
+      HouseAddress: address || '',
+      CustomerTypeID: customerTypeId ? Number(customerTypeId) : 3,
+      CustomerTypeName: resolveCustomerTypeName(customerTypeId),
+      CreatedAt: createdAt || new Date().toISOString(),
+      isOnline: Boolean(accountId),
+      Email: '',
+      Username: ''
+    };
+  }
+
+  function isSameCustomerEntry(existing, incoming) {
+    if (!existing || !incoming) return false;
+
+    if (
+      existing.CustomerID !== null &&
+      existing.CustomerID !== undefined &&
+      incoming.CustomerID !== null &&
+      incoming.CustomerID !== undefined &&
+      Number(existing.CustomerID) === Number(incoming.CustomerID)
+    ) {
+      return true;
+    }
+
+    if (
+      existing.AccountID !== null &&
+      existing.AccountID !== undefined &&
+      incoming.AccountID !== null &&
+      incoming.AccountID !== undefined &&
+      Number(existing.AccountID) === Number(incoming.AccountID)
+    ) {
+      return true;
+    }
+
+    const existingEmail = normaliseMatchValue(existing.Email);
+    const incomingEmail = normaliseMatchValue(incoming.Email);
+    if (existingEmail && incomingEmail && existingEmail === incomingEmail) {
+      return true;
+    }
+
+    const existingUsername = normaliseMatchValue(existing.Username);
+    const incomingUsername = normaliseMatchValue(incoming.Username);
+    if (existingUsername && incomingUsername && existingUsername === incomingUsername) {
+      return true;
+    }
+
+    const existingPhoneDigits = getPhoneDigits(existing.Phone);
+    const incomingPhoneDigits = getPhoneDigits(incoming.Phone);
+    if (existingPhoneDigits && incomingPhoneDigits && existingPhoneDigits === incomingPhoneDigits) {
+      return true;
+    }
+
+    return false;
+  }
+
+  function upsertAdminCustomerCache(record) {
+    if (!record) return;
+    try {
+      const cachedRaw = localStorage.getItem('adminCustomers');
+      let cached = [];
+      if (cachedRaw) {
+        try {
+          const parsed = JSON.parse(cachedRaw);
+          if (Array.isArray(parsed)) {
+            cached = parsed;
+          }
+        } catch (parseError) {
+          console.warn('Failed to parse adminCustomers cache, resetting with new record.', parseError);
+        }
+      }
+      let updated = false;
+
+      const next = cached.map(existing => {
+        if (!updated && isSameCustomerEntry(existing, record)) {
+          updated = true;
+          return {
+            ...existing,
+            ...record,
+            CreatedAt: existing.CreatedAt || record.CreatedAt
+          };
+        }
+        return existing;
+      });
+
+      if (!updated) {
+        next.push(record);
+      }
+
+      localStorage.setItem('adminCustomers', JSON.stringify(next));
+    } catch (error) {
+      console.warn('Unable to sync adminCustomers cache:', error);
+      try {
+        localStorage.setItem('adminCustomers', JSON.stringify([record]));
+      } catch (storageError) {
+        console.warn('Failed to initialise adminCustomers cache:', storageError);
+      }
+    }
   }
   
   function updateSubtotalUI() {
@@ -250,6 +382,7 @@
         adminWilkinsQty = 1;
         selectedOrderIndex = null;
         adminCustomerId = null;
+        adminCustomerAccountId = null;
         
         const quantityEl = document.getElementById("adminQuantity");
         if (quantityEl) quantityEl.value = adminQuantity;
@@ -783,7 +916,15 @@
     
     // Function to populate customer fields
     function populateCustomerFields(customer) {
-      adminCustomerId = customer.customerId ? parseInt(customer.customerId) : null;
+      const parsedCustomerId = customer.customerId !== undefined && customer.customerId !== null
+        ? parseInt(customer.customerId, 10)
+        : NaN;
+      adminCustomerId = Number.isFinite(parsedCustomerId) ? parsedCustomerId : null;
+
+      const parsedAccountId = customer.accountId !== undefined && customer.accountId !== null
+        ? parseInt(customer.accountId, 10)
+        : NaN;
+      adminCustomerAccountId = Number.isFinite(parsedAccountId) ? parsedAccountId : null;
       
       const firstNameEl = document.getElementById("adminFirstName");
       const lastNameEl = document.getElementById("adminLastName");
@@ -848,12 +989,13 @@
         }
         
         // Prepare order data
-        const isNewCustomer = !adminCustomerId;
-        const customerTypeId = regularCustomerEl && regularCustomerEl.value === "dealer" ? 2 : 1;
+        const isExistingCustomer = Boolean(adminCustomerId);
+        const wasNewCustomer = !isExistingCustomer;
+        const customerTypeId = isExistingCustomer
+          ? (regularCustomerEl && regularCustomerEl.value === "dealer" ? 2 : 1)
+          : 3;
         const mopMap = { cash: 1, gcash: 2, loan: 3 };
         const receivingMethodMap = { pickup: 1, delivery: 2 };
-        const orderTypeMap = { refill: 1, brandNew: 2 };
-        
         // Determine order type (1 = Single type, 2 = Mixed)
         let orderTypeId = 1;
         const hasRefill = adminOrders.some(o => o.orderType === "refill");
@@ -883,6 +1025,8 @@
           });
         }
         
+        const orderCompositionId = orderTypeId;
+
         const orderData = {
           isManualEntry: true, // Flag to indicate this is a manual order entry from admin
           customer: {
@@ -893,7 +1037,8 @@
             customerTypeId: customerTypeId
           },
           order: {
-            orderTypeId: orderTypeId, // This is for Refill/Mixed/Brand New, but will be overridden to Walk-in (1) in backend
+            orderTypeId: 1, // Manual admin entry orders are always Walk-in
+            orderCompositionId,
             receivingMethodId: receivingMethodMap[deliveryMethodEl?.value || "pickup"],
             mopId: mopMap[paymentMethodEl?.value || "cash"],
             deliveryAddress: address,
@@ -946,10 +1091,25 @@
           
           if (result.success) {
             alert(`Order placed successfully! Order ID: #${result.orderId}`);
+
+            const nowIso = new Date().toISOString();
+            const effectiveCustomerId = result.customerId || adminCustomerId;
+            const customerRecord = buildLocalCustomerRecord({
+              customerId: effectiveCustomerId,
+              accountId: adminCustomerAccountId,
+              firstName,
+              lastName,
+              phone,
+              address,
+              customerTypeId,
+              createdAt: wasNewCustomer ? nowIso : undefined
+            });
+            upsertAdminCustomerCache(customerRecord);
             
             // Reset form
             adminOrders = [];
             adminCustomerId = null;
+            adminCustomerAccountId = null;
             selectedOrderIndex = null;
             adminContainerType = "slim";
             adminOrderType = "refill";
@@ -997,32 +1157,8 @@
               renderOrdersFor(ymd(now));
             }
 
-            if (isNewCustomer && result.customerId) {
-              try {
-                const cached = JSON.parse(localStorage.getItem('adminCustomers') || '[]');
-                const newEntry = {
-                  CustomerID: result.customerId,
-                  AccountID: null,
-                  FirstName: firstName,
-                  LastName: lastName,
-                  Phone: phone,
-                  HouseAddress: address,
-                  CreatedAt: new Date().toISOString(),
-                  CustomerTypeName: 'Walk-in',
-                  CustomerTypeID: 3,
-                  isOnline: false
-                };
-                cached.push(newEntry);
-                localStorage.setItem('adminCustomers', JSON.stringify(cached));
-              } catch (storageError) {
-                console.warn('Failed to cache new customer locally', storageError);
-              }
-            }
-
-            // Notify logbook to refresh when a new walk-in customer was created
-            if (isNewCustomer) {
-              document.dispatchEvent(new Event('logbook:refresh'));
-            }
+            // Notify logbook to refresh so customer details stay in sync
+            document.dispatchEvent(new Event('logbook:refresh'));
           } else {
             alert(`Error placing order: ${result.error || result.message || "Unknown error"}`);
           }

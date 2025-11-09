@@ -38,16 +38,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // ==========================================
         $customer = $data['customer'];
         $order = $data['order'];
+        $isManualEntry = isset($data['isManualEntry']) && $data['isManualEntry'] === true;
 
         if (!isset($customer['customerId']) || $customer['customerId'] === null) {
             // ➕ NEW CUSTOMER (walk-in, first order)
             $firstAddress = $order['deliveryAddress']; // single address input
+            $customerTypeId = $customer['customerTypeId'] ?? null;
+            if ($isManualEntry) {
+                $customerTypeId = 3;
+            } elseif (!$customerTypeId) {
+                $customerTypeId = 1;
+            }
+
             $stmt = $conn->prepare("
                 INSERT INTO tbl_customer (CustomerTypeID, AccountID, FirstName, LastName, Phone, HouseAddress)
                 VALUES (?, ?, ?, ?, ?, ?)
             ");
             $stmt->execute([
-                $customer['customerTypeId'] ?? 1,
+                $customerTypeId,
                 null,
                 $customer['firstName'],
                 $customer['lastName'],
@@ -156,7 +164,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // ==========================================
         // For manual order entry (admin), set OrderTypeID to 1 (Walk-in) and OrderStatusID to 3 (Pending)
         // For online orders, use provided orderTypeId and OrderStatusID 1 (For Approval)
-        $isManualEntry = isset($data['isManualEntry']) && $data['isManualEntry'] === true;
         $orderTypeId = $isManualEntry ? 1 : ($order['orderTypeId'] ?? 1); // 1 = Walk-in, 2 = Online
         $orderStatusId = $isManualEntry ? 3 : 1; // 3 = Pending (no approval needed), 1 = For Approval
         
