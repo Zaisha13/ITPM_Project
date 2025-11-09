@@ -1008,7 +1008,8 @@
                   Phone: phone,
                   HouseAddress: address,
                   CreatedAt: new Date().toISOString(),
-                  CustomerTypeName: customerTypeId === 2 ? 'Dealer' : 'Regular',
+                  CustomerTypeName: 'Walk-in',
+                  CustomerTypeID: 3,
                   isOnline: false
                 };
                 cached.push(newEntry);

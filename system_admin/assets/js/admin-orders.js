@@ -929,17 +929,24 @@ const ORDER_STATUS_COLOR_MAP = {
     const content = document.getElementById('orderDetailsContent');
     
     if (!modal || !content) return;
-    
+
     const renderOrderDetails =
       (typeof window.__buildOrderDetailsHTML === 'function' && window.__buildOrderDetailsHTML) ||
       (typeof window.buildOrderDetailsHTML === 'function' && window.buildOrderDetailsHTML) ||
       buildOrderDetailsFallback;
 
-      content.innerHTML = renderOrderDetails(order);
     modal.style.display = 'flex';
     modal.classList.add('is-visible');
     modal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden'; // Prevent background scrolling
+
+    try {
+      const detailsHtml = renderOrderDetails(order);
+      content.innerHTML = detailsHtml;
+    } catch (error) {
+      console.error('Failed to render order details modal:', error);
+      content.innerHTML = buildOrderDetailsFallback(order);
+    }
   };
   
   // Close modal functionality

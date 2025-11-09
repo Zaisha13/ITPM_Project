@@ -254,6 +254,7 @@
 .orders-table.logbook-table {
     min-width: 1040px;
     width: 100%;
+    table-layout: fixed;
 }
 
 .logbook-col-id {

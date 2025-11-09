@@ -73,11 +73,13 @@
 .table-header > div {
     display: flex;
     align-items: center;
+    justify-content: flex-start;
     padding: calc(var(--admin-table-cell-padding-y) + 2px) calc(var(--admin-table-cell-padding-x) + 4px);
     font-size: var(--admin-table-header-font-size);
     white-space: nowrap;
     gap: 6px;
     line-height: 1.3;
+    text-align: left;
 }
 
 .admin-table-body,
@@ -106,11 +108,22 @@
 .table-row > div {
     display: flex;
     align-items: center;
+    justify-content: flex-start;
     padding: var(--admin-table-cell-padding-y) var(--admin-table-cell-padding-x);
     font-size: var(--admin-table-cell-font-size);
     color: var(--text-dark);
     gap: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.admin-table-header > div:nth-child(3),
+.table-header > div:nth-child(3),
+.admin-table-row > div:nth-child(3),
+.table-row > div:nth-child(3) {
     white-space: normal;
+    text-overflow: initial;
     word-break: break-word;
 }
 

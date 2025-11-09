@@ -5,6 +5,10 @@
     adminCustomers: 'adminCustomers'
   };
 
+  const API_ENDPOINTS = {
+    customers: '../admin_backend/api/read_customers.php'
+  };
+
   const CUSTOMER_TYPE_LABELS = {
     0: 'Admin',
     1: 'Regular',
@@ -365,9 +369,87 @@
   const statOnlineCustomers = document.getElementById('statOnlineCustomers');
   const statWalkinCustomers = document.getElementById('statWalkinCustomers');
   
-  function loadCustomers() {
+  async function fetchCustomersFromApi() {
     try {
-      allCustomersData = getLocalLogbookCustomers();
+      const response = await fetch(API_ENDPOINTS.customers, {
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+
+      const result = await response.json();
+      if (result?.status !== 'success' || !Array.isArray(result?.data)) {
+        return [];
+      }
+
+      const customerMap = new Map();
+      result.data.forEach(record => {
+        addCustomerFromSource(customerMap, record, {
+          isOnline: false,
+          source: 'api',
+          customerTypeName: record?.CustomerTypeName ?? 'Walk-in',
+          customerTypeId: record?.CustomerTypeID ?? 1
+        });
+      });
+
+      return Array.from(customerMap.values());
+    } catch (error) {
+      console.error('Failed to fetch customers from API:', error);
+      return [];
+    }
+  }
+
+  async function loadCustomers() {
+    try {
+      const customerMap = new Map();
+
+      const localCustomers = getLocalLogbookCustomers();
+      localCustomers.forEach(customer => {
+        const key = buildKeyFromCustomer(customer);
+        if (key) {
+          customerMap.set(key, customer);
+        }
+      });
+
+      const apiCustomers = await fetchCustomersFromApi();
+      apiCustomers.forEach(customer => {
+        const key = buildKeyFromCustomer(customer);
+        if (!key) return;
+        if (customerMap.has(key)) {
+          const merged = mergeCustomerRecords(customerMap.get(key), customer);
+          customerMap.set(key, merged);
+        } else {
+          customerMap.set(key, customer);
+        }
+      });
+
+      const toTimestamp = (customer) => {
+        const rawDate = customer?.createdAt ?? customer?.CreatedAt ?? customer?.created_at ?? null;
+        const parsed = rawDate ? new Date(rawDate).getTime() : 0;
+        return Number.isFinite(parsed) ? parsed : 0;
+      };
+
+      allCustomersData = Array.from(customerMap.values());
+      allCustomersData.sort((a, b) => {
+        const dateDiff = toTimestamp(b) - toTimestamp(a);
+        if (dateDiff !== 0) return dateDiff;
+
+        const nameA = `${(a.firstName || '').toLowerCase()} ${(a.lastName || '').toLowerCase()}`.trim();
+        const nameB = `${(b.firstName || '').toLowerCase()} ${(b.lastName || '').toLowerCase()}`.trim();
+        if (nameA < nameB) return -1;
+        if (nameA > nameB) return 1;
+        return 0;
+      });
+
+      allCustomersData.forEach(customer => {
+        delete customer.createdAtMs;
+      });
+
       applyFilters();
     } catch (error) {
       console.error('Error loading customers:', error);
@@ -593,9 +675,9 @@
   }
   
   // Initialize when Logbook view is shown
-  function initLogbookPage() {
+  async function initLogbookPage() {
     wireLogbookPage();
-    loadCustomers();
+    await loadCustomers();
   }
   
   // Expose render function globally for switchView
