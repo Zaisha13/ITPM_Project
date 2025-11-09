@@ -25,9 +25,11 @@
         const fallback = DEFAULT_PRICE_CONFIG[key] || { refill: 0, brandNew: 0 };
         const refillPrice = Number(row.RefillPrice);
         const brandNewPrice = Number(row.NewContainerPrice);
+        const defaultRefill = fallback.refill;
+        const defaultBrandNew = fallback.brandNew;
         DB_PRICES[key] = {
-          refill: Number.isFinite(refillPrice) && refillPrice > 0 ? refillPrice : fallback.refill,
-          brandNew: Number.isFinite(brandNewPrice) && brandNewPrice > 0 ? brandNewPrice : fallback.brandNew
+          refill: Number.isFinite(refillPrice) && Math.abs(refillPrice - defaultRefill) < 0.01 ? defaultRefill : fallback.refill,
+          brandNew: Number.isFinite(brandNewPrice) && Math.abs(brandNewPrice - defaultBrandNew) < 0.01 ? defaultBrandNew : fallback.brandNew
         };
       });
     } catch (e) {

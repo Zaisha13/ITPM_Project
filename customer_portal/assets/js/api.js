@@ -280,13 +280,15 @@ function buildPriceLookup() {
       if (!Number.isFinite(containerId) || containerId <= 0) {
         return;
       }
+      const defaultRefill = DEFAULT_PRICE_LOOKUP[`${containerId}-refill`] ?? DEFAULT_PRICE_LOOKUP[`1-refill`];
+      const defaultBrandNew = DEFAULT_PRICE_LOOKUP[`${containerId}-brandNew`] ?? DEFAULT_PRICE_LOOKUP[`1-brandNew`];
       const refillPrice = Number(row.RefillPrice ?? row.refill ?? row.Refill ?? row.refillPrice);
       const brandNewPrice = Number(row.NewContainerPrice ?? row.brandNew ?? row.NewPrice ?? row.brandNewPrice);
-      if (Number.isFinite(refillPrice) && refillPrice > 0) {
-        lookup[`${containerId}-refill`] = refillPrice;
+      if (Number.isFinite(refillPrice) && Math.abs(refillPrice - defaultRefill) < 0.01) {
+        lookup[`${containerId}-refill`] = defaultRefill;
       }
-      if (Number.isFinite(brandNewPrice) && brandNewPrice > 0) {
-        lookup[`${containerId}-brandNew`] = brandNewPrice;
+      if (Number.isFinite(brandNewPrice) && Math.abs(brandNewPrice - defaultBrandNew) < 0.01) {
+        lookup[`${containerId}-brandNew`] = defaultBrandNew;
       }
     });
   } catch (error) {

@@ -108,6 +108,7 @@
     }
 
     const lookup = { ...DEFAULT_PRICE_LOOKUP };
+    let hasInvalidPriceOverride = false;
     try {
       const raw = localStorage.getItem(PRICE_CONFIG_STORAGE_KEY);
       if (raw) {
@@ -118,19 +119,32 @@
             if (!Number.isFinite(containerId) || containerId <= 0) {
               return;
             }
+            const defaultRefill = DEFAULT_PRICE_LOOKUP[`${containerId}-1`] ?? 0;
+            const defaultBrandNew = DEFAULT_PRICE_LOOKUP[`${containerId}-2`] ?? 0;
             const refillPrice = Number(row.RefillPrice ?? row.refillPrice ?? row.refill);
             const brandNewPrice = Number(row.NewContainerPrice ?? row.newContainerPrice ?? row.brandNew);
-            if (Number.isFinite(refillPrice) && refillPrice > 0) {
+            if (Number.isFinite(refillPrice) && Math.abs(refillPrice - defaultRefill) < 0.01) {
               lookup[`${containerId}-1`] = refillPrice;
+            } else if (Number.isFinite(refillPrice)) {
+              hasInvalidPriceOverride = true;
             }
-            if (Number.isFinite(brandNewPrice) && brandNewPrice > 0) {
+            if (Number.isFinite(brandNewPrice) && Math.abs(brandNewPrice - defaultBrandNew) < 0.01) {
               lookup[`${containerId}-2`] = brandNewPrice;
+            } else if (Number.isFinite(brandNewPrice)) {
+              hasInvalidPriceOverride = true;
             }
           });
         }
       }
     } catch (error) {
       console.warn('Failed to load price configuration for dashboard, using defaults.', error);
+    }
+    if (hasInvalidPriceOverride) {
+      try {
+        localStorage.removeItem(PRICE_CONFIG_STORAGE_KEY);
+      } catch (storageError) {
+        console.warn('Failed to clear invalid price configuration override.', storageError);
+      }
     }
 
     priceLookupCache = lookup;
@@ -264,11 +278,17 @@
       categoryName = ORDER_CATEGORY_NAME_MAP[categoryId] || '-';
     }
 
+    const resolvedUnitPrice = resolveUnitPrice(containerId, categoryId, lookup);
     const explicitUnitPrice = toNumber(detail?.UnitPrice ?? detail?.unitPrice ?? detail?.unit_price ?? detail?.price);
-    const unitPrice = explicitUnitPrice > 0 ? explicitUnitPrice : resolveUnitPrice(containerId, categoryId, lookup);
+    const unitPrice = (explicitUnitPrice > 0 && Math.abs(explicitUnitPrice - resolvedUnitPrice) < 0.01)
+      ? explicitUnitPrice
+      : resolvedUnitPrice;
 
     const explicitSubtotal = toNumber(detail?.Subtotal ?? detail?.subtotal ?? detail?.Total ?? detail?.total ?? detail?.amount);
-    const subtotal = explicitSubtotal > 0 ? explicitSubtotal : unitPrice * quantity;
+    const resolvedSubtotal = unitPrice * quantity;
+    const subtotal = (explicitSubtotal > 0 && Math.abs(explicitSubtotal - resolvedSubtotal) < 0.01)
+      ? explicitSubtotal
+      : resolvedSubtotal;
 
     return {
       OrderDetailID: detail?.OrderDetailID ?? detail?.orderDetailID ?? detail?.orderDetailId ?? index + 1,

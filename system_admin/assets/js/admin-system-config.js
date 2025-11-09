@@ -221,7 +221,9 @@
       return { success: true };
     } catch (error) {
       console.error('Failed to persist maintenance notices:', error);
-      return { success: false, message: error.message };
+      const message = error?.message || 'Unknown error';
+      const localOnly = !(typeof message === 'string' && message.startsWith('Server responded'));
+      return { success: false, message, localOnly };
     }
   }
 
@@ -282,6 +284,9 @@
 
     if (result.success) {
       alert('Maintenance notice deleted.');
+    } else if (result.localOnly) {
+      console.warn('Maintenance notice deletion pending server sync.', result.message);
+      alert('Maintenance notice deleted locally. Server sync pending.');
     } else {
       alert('Deleted locally but failed to sync with server: ' + result.message);
     }
@@ -401,6 +406,9 @@
 
     if (result.success) {
       alert('Maintenance notice added successfully!');
+    } else if (result.localOnly) {
+      console.warn('Maintenance notice saved locally. Server sync pending.', result.message);
+      alert('Maintenance notice saved locally. Server sync pending.');
     } else {
       alert('Notice added locally but failed to sync with server: ' + result.message);
     }
@@ -419,6 +427,9 @@
 
     if (result.success) {
       alert('All maintenance notices cleared!');
+    } else if (result.localOnly) {
+      console.warn('Maintenance notice clear pending server sync.', result.message);
+      alert('All maintenance notices cleared locally. Server sync pending.');
     } else {
       alert('Cleared locally but failed to sync with server: ' + result.message);
     }
