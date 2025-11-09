@@ -201,7 +201,7 @@
 .admin-form-title {
     font-size: 22px;
     font-weight: 700;
-    color: var(--text-dark);
+    background: var(--primary-blue);
     text-align: center;
     margin-bottom: 24px;
     letter-spacing: -0.5px;

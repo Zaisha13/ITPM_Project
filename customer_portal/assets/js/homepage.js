@@ -1702,14 +1702,13 @@ document.getElementById('learnMoreBtn')?.addEventListener('click', () => {
 /* =========================
    MAINTENANCE NOTICE MODAL
    ========================= */
-// Function to fetch maintenance notice from API
-async function fetchMaintenanceNotice() {
+// Function to fetch maintenance notices from API
+async function fetchMaintenanceNotices() {
   try {
     const API_BASE = new URL('../admin_backend/api/', window.location.href).toString().replace(/\/$/, '');
     const response = await fetch(`${API_BASE}/get_system_config.php?type=maintenance`, {
       credentials: 'include'
     });
-    
     if (!response.ok) {
       throw new Error('Failed to fetch maintenance notice');
     }
@@ -1717,21 +1716,44 @@ async function fetchMaintenanceNotice() {
     const data = await response.json();
     
     if (data.success && data.config) {
-      return data.config;
+      if (Array.isArray(data.config.notices)) {
+        return data.config.notices;
+      }
+
+      // Legacy payload support
+      if (data.config.title || data.config.message) {
+        return [{
+          id: data.config.id || `legacy_${Date.now()}`,
+          title: data.config.title || 'Maintenance Notice',
+          message: data.config.message || '',
+          startDate: data.config.startDate || '',
+          endDate: data.config.endDate || '',
+          createdAt: data.config.createdAt || new Date().toISOString()
+        }];
+      }
+
+      return [];
     } else {
       // Try localStorage as fallback
       const stored = localStorage.getItem('system_config');
       if (stored) {
         const config = JSON.parse(stored);
-        return {
-          active: config.maintenance_active === '1' || config.maintenance_active === true,
-          title: config.maintenance_title || '',
-          message: config.maintenance_message || '',
-          startDate: config.maintenance_start_date || '',
-          endDate: config.maintenance_end_date || ''
-        };
+        if (Array.isArray(config.maintenance_notices)) {
+          return config.maintenance_notices;
+        }
+
+        if (config.maintenance_title || config.maintenance_message) {
+          return [{
+            id: config.maintenance_id || `legacy_${Date.now()}`,
+            title: config.maintenance_title || 'Maintenance Notice',
+            message: config.maintenance_message || '',
+            startDate: config.maintenance_start_date || '',
+            endDate: config.maintenance_end_date || '',
+            createdAt: config.maintenance_created_at || new Date().toISOString()
+          }];
+        }
       }
-      return null;
+      return [];
     }
   } catch (error) {
     console.error('Error fetching maintenance notice:', error);
@@ -1740,18 +1762,25 @@ async function fetchMaintenanceNotice() {
       const stored = localStorage.getItem('system_config');
       if (stored) {
         const config = JSON.parse(stored);
-        return {
-          active: config.maintenance_active === '1' || config.maintenance_active === true,
-          title: config.maintenance_title || '',
-          message: config.maintenance_message || '',
-          startDate: config.maintenance_start_date || '',
-          endDate: config.maintenance_end_date || ''
-        };
+        if (Array.isArray(config.maintenance_notices)) {
+          return config.maintenance_notices;
+        }
+
+        if (config.maintenance_title || config.maintenance_message) {
+          return [{
+            id: config.maintenance_id || `legacy_${Date.now()}`,
+            title: config.maintenance_title || 'Maintenance Notice',
+            message: config.maintenance_message || '',
+            startDate: config.maintenance_start_date || '',
+            endDate: config.maintenance_end_date || '',
+            createdAt: config.maintenance_created_at || new Date().toISOString()
+          }];
+        }
       }
     } catch (e) {
       console.error('Error parsing localStorage:', e);
     }
-    return null;
+    return [];
   }
 }
 
@@ -1789,65 +1818,98 @@ window.openMaintenanceNoticeModal = async function() {
   const content = document.getElementById('maintenanceContent');
   const empty = document.getElementById('maintenanceEmpty');
   const title = document.getElementById('maintenanceModalTitle');
-  const message = document.getElementById('maintenanceMessage');
-  const dates = document.getElementById('maintenanceDates');
+  const noticeList = document.getElementById('maintenanceNoticeCollection');
   
   if (loading) loading.style.display = 'block';
   if (content) content.style.display = 'none';
   if (empty) empty.style.display = 'none';
-  
-  // Fetch maintenance notice
-  const maintenance = await fetchMaintenanceNotice();
+  if (noticeList) noticeList.innerHTML = '';
+
+  const notices = await fetchMaintenanceNotices();
   
   // Hide loading
   if (loading) loading.style.display = 'none';
   
-  if (maintenance && maintenance.active && (maintenance.title || maintenance.message)) {
-    // Show content
+  if (Array.isArray(notices) && notices.length > 0) {
+    if (title) {
+      title.textContent = notices.length > 1 ? 'Maintenance Notices' : 'Maintenance Notice';
+    }
+
     if (content) content.style.display = 'block';
     if (empty) empty.style.display = 'none';
     
-    // Set title
-    if (title) {
-      title.textContent = maintenance.title || 'Maintenance Notice';
-    }
-    
-    // Set message
-    if (message) {
-      message.textContent = maintenance.message || 'Maintenance is currently scheduled.';
-    }
-    
-    // Set dates
-    if (dates) {
-      let datesHTML = '';
-      
-      if (maintenance.startDate) {
-        datesHTML += `
-          <div class="maintenance-date-item">
-            <span class="maintenance-date-label">Estimated Start Date & Time:</span>
-            <span class="maintenance-date-value">${formatDateTime(maintenance.startDate)}</span>
-          </div>`;
-      }
-      
-      if (maintenance.endDate) {
-        datesHTML += `
-          <div class="maintenance-date-item">
-            <span class="maintenance-date-label">Estimated End Date & Time:</span>
-            <span class="maintenance-date-value">${formatDateTime(maintenance.endDate)}</span>
-          </div>`;
-      }
-      
-      if (datesHTML) {
-        dates.innerHTML = datesHTML;
-      } else {
-        dates.innerHTML = '';
-      }
+    if (noticeList) {
+      notices.forEach((notice) => {
+        const card = document.createElement('article');
+        card.className = 'maintenance-modal-card';
+
+        const cardHeader = document.createElement('div');
+        cardHeader.className = 'maintenance-modal-card-header';
+
+        const cardTitle = document.createElement('h3');
+        cardTitle.className = 'maintenance-modal-card-title';
+        cardTitle.textContent = notice.title || 'Maintenance Notice';
+        cardHeader.appendChild(cardTitle);
+
+        const created = notice.createdAt ? formatDateTime(notice.createdAt) : '';
+        if (created) {
+          const createdSpan = document.createElement('span');
+          createdSpan.className = 'maintenance-modal-card-meta';
+          createdSpan.textContent = `Added on ${created}`;
+          cardHeader.appendChild(createdSpan);
+        }
+
+        card.appendChild(cardHeader);
+
+        if (notice.message) {
+          const messageEl = document.createElement('p');
+          messageEl.className = 'maintenance-modal-card-message';
+          messageEl.textContent = notice.message;
+          card.appendChild(messageEl);
+        }
+
+        const datesWrapper = document.createElement('div');
+        datesWrapper.className = 'maintenance-modal-card-dates';
+
+        if (notice.startDate) {
+          const startRow = document.createElement('div');
+          startRow.className = 'maintenance-modal-card-date';
+          const startLabel = document.createElement('span');
+          startLabel.className = 'maintenance-modal-card-date-label';
+          startLabel.textContent = 'Estimated Start:';
+          const startValue = document.createElement('span');
+          startValue.className = 'maintenance-modal-card-date-value';
+          startValue.textContent = formatDateTime(notice.startDate);
+          startRow.appendChild(startLabel);
+          startRow.appendChild(startValue);
+          datesWrapper.appendChild(startRow);
+        }
+
+        if (notice.endDate) {
+          const endRow = document.createElement('div');
+          endRow.className = 'maintenance-modal-card-date';
+          const endLabel = document.createElement('span');
+          endLabel.className = 'maintenance-modal-card-date-label';
+          endLabel.textContent = 'Estimated End:';
+          const endValue = document.createElement('span');
+          endValue.className = 'maintenance-modal-card-date-value';
+          endValue.textContent = formatDateTime(notice.endDate);
+          endRow.appendChild(endLabel);
+          endRow.appendChild(endValue);
+          datesWrapper.appendChild(endRow);
+        }
+
+        if (datesWrapper.childNodes.length) {
+          card.appendChild(datesWrapper);
+        }
+
+        noticeList.appendChild(card);
+      });
     }
   } else {
-    // Show empty state
+    if (title) title.textContent = 'Maintenance Notice';
     if (content) content.style.display = 'none';
     if (empty) empty.style.display = 'block';
-    if (title) title.textContent = 'Maintenance Notice';
   }
 };
 
